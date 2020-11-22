@@ -2,9 +2,28 @@
 <html>
     <body background="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1606046380659&di=01cb76b204dd58ffcf83bd75e78eb82b&imgtype=0&src=http%3A%2F%2Fgss0.baidu.com%2F-4o3dSag_xI4khGko9WTAnF6hhy%2Fzhidao%2Fpic%2Fitem%2F37d3d539b6003af3de8986413c2ac65c1038b6e4.jpg">
         <h1 style="font-family:verdana;color:PowderBlue">Hello！</h1>
-        <p style="font-family:verdana;color:PowderBlue">I'm Charming_Liu.</p>
-        <p style="font-family:verdana;color:PowderBlue">This is my website.</p>
-        <p style="font-family:verdana;color:PowderBlue">---------------------------------------</p>
-        <p style="font-family:verdana;color:PowderBlue">Website version 2020.11.22.04 [1.0.4]</p>
+        <h3 style="font-family:verdana;color:PowderBlue">I'm Charming_Liu.</h3>
+        <h3 style="font-family:verdana;color:PowderBlue">This is my website.</h3>
+        <h3 style="font-family:verdana;color:PowderBlue">---------------------------------------</h3>
+        
+        <details>
+            <summary style="font-family:verdana;color:PowderBlue">Visual Studio Code C++ Configuration method</summary>
+            <p style="font-family:verdana;color:rgb(195, 239, 245)">Website version 2020.11.22.04[1.0.4]</p>
+        </details>
+        <div id="box"></div>
+        <script type="text/javascript">
+            function setStorage(){
+                if(localStorage.counter){
+                    localStorage.counter=Number(localStorage.counter)+1;
+                }else{
+                    localStorage.counter=1;
+                }
+                return localStorage.counter;
+            }
+            var counter=setStorage();
+            var oBox=document.getElementById('box');
+            oBox.innerHTML="该网页被访问的次数为"+counter+"次";            
+        </script>
+        <h5 style="font-family:verdana;color:PowderBlue">Website version 2020.11.22.04[1.0.4]</h5>
     </body>
 </html>
