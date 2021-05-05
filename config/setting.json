@@ -1,0 +1,26 @@
+{
+  "config": {
+    "branch": "master",
+    "domain": "https://charming-liu07.github.io",
+    "email": "charming07scorpio@gmail.com",
+    "platform": "github",
+    "repository": "Charming-liu07.github.io",
+    "token": "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",
+    "username": "Charming-liu07"
+  },
+  "comment": {
+    "commentPlatform": "gitalk",
+    "disqusSetting": {
+      "api": "",
+      "apikey": "",
+      "shortname": ""
+    },
+    "gitalkSetting": {
+      "clientId": "",
+      "clientSecret": "",
+      "owner": "",
+      "repository": ""
+    },
+    "showComment": false
+  }
+}
