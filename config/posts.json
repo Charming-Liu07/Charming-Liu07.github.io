@@ -1,6 +1,22 @@
 {
   "posts": [
     {
+      "content": "# Visual Studio Code C++配置方法\r\n\r\n------------\r\n\r\n### 第一次写博客，如有不周还请见谅！！\r\n### 因为不想用Dev-C++了，还有就是~~Dev-C++太丑了！~~，想配置VSC.\r\n## · 你要有一个VS code ！\r\n#### 首先，去vscode官网下载vscode：[VScode官网](https://code.visualstudio.com/)，下载和安装就不用解释了。\r\n## · 你还要有一个MinGW-W64  ！\r\n#### mingw官网下载：[mingw官网](https://sourceforge.net/projects/mingw-w64/files/)，向下拉找到MinGW-W64 GCC-8.1.0，下载x86_64-posix-seh。\r\n## · 你还要有一个环境变量  ！\r\n#### 将MinGW-W64的压缩包解压，将其中的bin文件夹添加为环境变量。如果不知道如何添加，请自行搜索！\r\n#### 如果添加好了环境变量，按 win+R 输入cmd进入控制台，输入g++.\r\n#### g++: fatal error: no input files\r\n#### compilation terminated.\r\n#### 若是出现上面的字代表安装成功了 ！\r\n## · 安装 VS code 插件  ！\r\n#### 1.C/C++\r\n#### 2.Chinese (Simplified) Language Pack for Visual Studio Code (选装)\r\n## · 配置launch.json 和 tasks.json ！\r\n```\r\n{\r\n\t  //launch.json\r\n    // 使用 IntelliSense 了解相关属性。 \r\n    // 悬停以查看现有属性的描述。\r\n    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387\r\n    \"version\": \"2.0.0\",\r\n    \"configurations\": [\r\n        {\r\n            \"name\": \"g++.exe build and debug active file\",\r\n            \"type\": \"cppdbg\",\r\n            \"request\": \"launch\",\r\n            \"program\": \"${fileDirname}\\\\${fileBasenameNoExtension}.exe\",\r\n            \"args\": [],\r\n            \"stopAtEntry\": false,\r\n            \"cwd\": \"${workspaceFolder}\",\r\n            \"environment\": [],\r\n            \"externalConsole\": false,\r\n            \"MIMode\": \"gdb\",\r\n            \"miDebuggerPath\": \"gdb.exe的位置\",\r\n            \"setupCommands\": [\r\n                {\r\n                    \"description\": \"为 gdb 启用整齐打印\",\r\n                    \"text\": \"-enable-pretty-printing\",\r\n                    \"ignoreFailures\": true\r\n                }\r\n            ]\r\n            \"preLaunchTask\": \"task g++\"\r\n        }\r\n    ]\r\n}\r\n```\r\n",
+      "data": {
+        "title": "Visual Studio Code C++配置方法",
+        "date": "2021-05-05 12:44:41",
+        "tags": [],
+        "published": true,
+        "hideInList": false,
+        "feature": null,
+        "isTop": false
+      },
+      "isEmpty": false,
+      "excerpt": "",
+      "abstract": "",
+      "fileName": "ce-shi"
+    },
+    {
       "content": "> 欢迎来到我的小站呀，很高兴遇见你！🤝\n\n## 🏠 关于本站\n\n## 👨‍💻 博主是谁\n\n## ⛹ 兴趣爱好\n\n## 📬 联系我呀\n",
       "data": {
         "title": "关于",
@@ -15,31 +31,13 @@
       "excerpt": "",
       "abstract": "",
       "fileName": "about"
-    },
-    {
-      "content": "👏  欢迎使用 **Gridea** ！  \n✍️  **Gridea** 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意... ... \n\n<!-- more -->\n\n[Github](https://github.com/getgridea/gridea)  \n[Gridea 主页](https://gridea.dev/)  \n[示例网站](http://fehey.com/)\n\n## 特性👇\n📝  你可以使用最酷的 **Markdown** 语法，进行快速创作  \n\n🌉  你可以给文章配上精美的封面图和在文章任意位置插入图片  \n\n🏷️  你可以对文章进行标签分组  \n\n📋  你可以自定义菜单，甚至可以创建外部链接菜单  \n\n💻  你可以在 **Windows**，**MacOS** 或 **Linux** 设备上使用此客户端  \n\n🌎  你可以使用 **𝖦𝗂𝗍𝗁𝗎𝖻 𝖯𝖺𝗀𝖾𝗌** 或 **Coding Pages** 向世界展示，未来将支持更多平台  \n\n💬  你可以进行简单的配置，接入 [Gitalk](https://github.com/gitalk/gitalk) 或 [DisqusJS](https://github.com/SukkaW/DisqusJS) 评论系统  \n\n🇬🇧  你可以使用**中文简体**或**英语**  \n\n🌁  你可以任意使用应用内默认主题或任意第三方主题，强大的主题自定义能力  \n\n🖥  你可以自定义源文件夹，利用 OneDrive、百度网盘、iCloud、Dropbox 等进行多设备同步  \n\n🌱 当然 **Gridea** 还很年轻，有很多不足，但请相信，它会不停向前 🏃\n\n未来，它一定会成为你离不开的伙伴\n\n尽情发挥你的才华吧！\n\n😘 Enjoy~\n",
-      "data": {
-        "title": "Hello Gridea",
-        "date": "2018-12-12 00:00:00",
-        "tags": [
-          "Gridea"
-        ],
-        "published": true,
-        "hideInList": false,
-        "feature": "/post-images/hello-gridea.png",
-        "isTop": false
-      },
-      "isEmpty": false,
-      "excerpt": "",
-      "abstract": "👏  欢迎使用 **Gridea** ！  \n✍️  **Gridea** 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意... ... ",
-      "fileName": "hello-gridea"
     }
   ],
   "tags": [
     {
       "name": "Gridea",
       "slug": "l4ron_Vck",
-      "used": true
+      "used": false
     }
   ],
   "menus": [
