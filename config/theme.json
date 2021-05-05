@@ -10,7 +10,7 @@
     "postPath": "post",
     "postUrlFormat": "SLUG",
     "showFeatureImage": true,
-    "siteDescription": "Hello !!",
+    "siteDescription": "",
     "siteName": "Charming's Website",
     "tagPath": "tag",
     "tagUrlFormat": "SHORT_ID",
