@@ -2,7 +2,7 @@
 #   Main Configs   #
 # ---------------- #
 baseurl:
-url: https://mazhuang.org
+url: https://charming-liu07.github.io/
 date_format: "ordinal"
 title: Charming的博客
 subtitle: "Charming的博客"
@@ -49,11 +49,11 @@ highlight_theme: github
 # ---------------- #
 #      Author      #
 # ---------------- #
-author: Zhuang Ma
+author: Charming Liu
 organization: 
 organization_url: 
-github_username: mzlogin
-location: Wuhan, China
+github_username: Charming-Liu07
+location: Beijing, China
 email: chumpma@gmail.com
 
 # ---------------- #
