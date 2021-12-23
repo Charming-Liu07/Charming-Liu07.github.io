@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://charming-liu07.github.io</id>
     <title>Charming_Liu的个人博客</title>
-    <updated>2021-12-19T03:43:53.465Z</updated>
+    <updated>2021-12-23T08:20:34.453Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://charming-liu07.github.io"/>
     <link rel="self" href="https://charming-liu07.github.io/atom.xml"/>
@@ -16,14 +16,5 @@
         <link href="https://charming-liu07.github.io/post/chuang-ke-xiang-mu-ri-zhi-01/">
         </link>
         <updated>2021-12-19T03:20:29.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="20211216-20211222week1">2021/12/16-2021/12/22，Week1</h1>
-<h2 id="20211216-day1">🤔2021.12.16, Day1,</h2>
-<p>确定了项目的方向即使用Unity开发一个全新的游戏</p>
-<h2 id="20211217-day2">🙏2021.12.17, Day2,</h2>
-<p>讨论了游戏的背景，人物，时间</p>
-<h2 id="20211219-day4">🤠2021.12.19, Day4,</h2>
-<p>确定将项目日志放在<a href="https://charming-liu07.github.io/">https://charming-liu07.github.io/</a>上进行更新</p>
-<p>项目日志由Charming编辑</p>
-]]></content>
     </entry>
 </feed>
