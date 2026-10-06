@@ -41,7 +41,11 @@ const navigation = [
       try {
         const saved = localStorage.getItem('charming-theme');
         document.documentElement.dataset.theme =
-          saved || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+          saved === 'light' || saved === 'dark'
+            ? saved
+            : matchMedia('(prefers-color-scheme: dark)').matches
+              ? 'dark'
+              : 'light';
       } catch {
         document.documentElement.dataset.theme = 'light';
       }
@@ -129,6 +133,7 @@ const navigation = [
             id="theme-toggle"
             class="icon-button"
             aria-label="切换深浅主题"
+            aria-pressed="false"
             title="切换深浅主题"
           >
             <span class="theme-sun">
@@ -172,9 +177,16 @@ const navigation = [
       </footer>
     </div>
     <script>
-      document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      import '../scripts/site-motion';
+      const themeToggle = document.getElementById('theme-toggle');
+      themeToggle?.setAttribute(
+        'aria-pressed',
+        String(document.documentElement.dataset.theme === 'dark'),
+      );
+      themeToggle?.addEventListener('click', () => {
         const theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
         document.documentElement.dataset.theme = theme;
+        themeToggle.setAttribute('aria-pressed', String(theme === 'dark'));
         try {
           localStorage.setItem('charming-theme', theme);
         } catch {
@@ -183,6 +195,10 @@ const navigation = [
       });
       document.addEventListener('keydown', (event) => {
         if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+          const editing =
+            event.target instanceof Element &&
+            event.target.closest('input, textarea, select, [contenteditable="true"]');
+          if (editing || event.isComposing || document.querySelector('dialog[open]')) return;
           event.preventDefault();
           window.location.href = '/search/';
         }

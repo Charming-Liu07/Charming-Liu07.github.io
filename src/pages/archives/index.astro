@@ -63,7 +63,7 @@ const years = [...new Set(articles.map((article) => article.data.date.getUTCFull
     margin: 0;
   }
   .year-heading span {
-    font-size: 10px;
+    font-size: 14px;
     color: var(--muted);
   }
   .archive-year ul {
@@ -80,7 +80,7 @@ const years = [...new Set(articles.map((article) => article.data.date.getUTCFull
     padding: 21px 0;
   }
   .archive-year time {
-    font-size: 11px;
+    font-size: 14px;
     color: var(--muted);
     font-variant-numeric: tabular-nums;
   }
@@ -88,6 +88,7 @@ const years = [...new Set(articles.map((article) => article.data.date.getUTCFull
     flex: 1;
     display: flex;
     align-items: center;
+    min-height: 44px;
     justify-content: space-between;
     font-size: 15px;
   }
