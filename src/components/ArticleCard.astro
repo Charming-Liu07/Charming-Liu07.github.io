@@ -1,0 +1,133 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Icon from './Icon.astro';
+interface Props {
+  article: CollectionEntry<'blog'>;
+  featured?: boolean;
+}
+const { article, featured = false } = Astro.props;
+const date = article.data.date.toISOString().slice(0, 10);
+---
+
+<article class:list={{ card: true, 'article-card': true, featured }}>
+  <div class="article-meta">
+    <span class="article-type">
+      <Icon name="book" size={14} />
+      随笔
+    </span>
+    <time datetime={date}>{date}</time>
+  </div>
+  <h3>
+    <a href={`/post/${article.id}/`}>
+      {article.data.title}
+      <span class="article-arrow">
+        <Icon name="arrowUp" size={18} />
+      </span>
+    </a>
+  </h3>
+  <p>{article.data.description}</p>
+  <div class="article-bottom">
+    {article.data.tags.length > 0 ? (
+      <div class="article-tags">
+        {article.data.tags.map((tag) => (
+          <a class="pill" href={`/tags/#${encodeURIComponent(tag)}`}>
+            {tag}
+          </a>
+        ))}
+      </div>
+    ) : (
+      <span class="article-author">Charming</span>
+    )}
+    <a class="read-link" href={`/post/${article.id}/`}>
+      阅读文章 <Icon name="arrow" size={14} />
+    </a>
+  </div>
+</article>
+<style>
+  .article-card {
+    padding: 26px 27px;
+    display: flex;
+    flex-direction: column;
+    min-height: 221px;
+    transition:
+      border-color 0.2s,
+      transform 0.2s;
+  }
+  .article-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+  .article-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 10px;
+    color: var(--muted);
+    margin-bottom: 23px;
+  }
+  .article-type {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .article-card h3 {
+    font-size: 22px;
+    margin: 0 0 12px;
+    letter-spacing: -0.025em;
+  }
+  .article-card h3 a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  .article-arrow {
+    color: var(--muted);
+    transition: color 0.2s;
+  }
+  .article-card:hover .article-arrow {
+    color: var(--accent);
+  }
+  .article-card p {
+    font-size: 12px;
+    color: var(--muted);
+    margin: 0 0 28px;
+    flex: 1;
+  }
+  .article-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+  .article-tags {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+  .article-author {
+    color: var(--muted);
+    font-size: 10px;
+  }
+  .read-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .featured {
+    min-height: 239px;
+  }
+  .featured h3 {
+    font-size: 24px;
+  }
+  @media (max-width: 760px) {
+    .article-card {
+      padding: 22px;
+      min-height: 211px;
+    }
+  }
+</style>

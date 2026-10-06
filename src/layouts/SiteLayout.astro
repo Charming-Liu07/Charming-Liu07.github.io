@@ -1,0 +1,192 @@
+---
+import '../styles/global.css';
+import Icon from '../components/Icon.astro';
+interface Props {
+  title: string;
+  description?: string;
+  active?: 'home' | 'blog' | 'memory' | 'about';
+  fullWidth?: boolean;
+}
+const {
+  title,
+  description = 'Charming 的个人博客与本机 AI 对话记忆库。记录文字，整理知识，延续思考。',
+  active = 'home',
+  fullWidth = false,
+} = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const navigation = [
+  { label: '首页', href: '/', icon: 'home', id: 'home' },
+  { label: '文章', href: '/blog/', icon: 'book', id: 'blog' },
+  { label: '记忆库', href: '/memory/', icon: 'memory', id: 'memory' },
+  { label: '关于', href: '/about/', icon: 'user', id: 'about' },
+];
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="color-scheme" content="light dark" />
+    <title>{title === '首页' ? 'Charming · 文字与记忆' : `${title} · Charming`}</title>
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="alternate" type="application/atom+xml" title="Charming 的文章" href="/atom.xml" />
+    <meta property="og:title" content={`${title} · Charming`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <script is:inline>
+      try {
+        const saved = localStorage.getItem('charming-theme');
+        document.documentElement.dataset.theme =
+          saved || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      } catch {
+        document.documentElement.dataset.theme = 'light';
+      }
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">
+      跳到主要内容
+    </a>
+    <aside class="sidebar" aria-label="主导航" data-pagefind-ignore>
+      <a class="brand" href="/" aria-label="Charming 首页">
+        <span class="brand-mark">
+          C<span>·</span>
+        </span>
+        <span>
+          Charming<span class="brand-caption">文字与记忆</span>
+        </span>
+      </a>
+      <p class="sidebar-label">我的空间</p>
+      <nav class="main-nav">
+        {navigation.map((item) => (
+          <a
+            href={item.href}
+            class:list={{ 'nav-item': true, active: active === item.id }}
+            aria-current={active === item.id ? 'page' : undefined}
+          >
+            <Icon name={item.icon} />
+            <span>{item.label}</span>
+            {item.id === 'memory' && <span class="local-tag">本机</span>}
+          </a>
+        ))}
+      </nav>
+      <div class="sidebar-collections">
+        <p class="sidebar-label">浏览文章</p>
+        <a href="/archives/">
+          <Icon name="archive" size={17} />
+          归档
+        </a>
+        <a href="/tags/">
+          <Icon name="tag" size={17} />
+          标签
+        </a>
+        <a href="/atom.xml">
+          <span class="rss-glyph">◔</span>订阅 RSS
+        </a>
+      </div>
+      <div class="sidebar-bottom">
+        <div class="owner">
+          <img src="/images/avatar.png" alt="Charming 的头像" width="35" height="35" />
+          <span>
+            <strong>Charming</strong>
+            <small>记录，也记得。</small>
+          </span>
+          <a
+            href="https://github.com/Charming-Liu07"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Charming 的 GitHub"
+          >
+            <Icon name="arrowUp" size={16} />
+          </a>
+        </div>
+      </div>
+    </aside>
+    <div class="site-shell">
+      <header class="topbar" data-pagefind-ignore>
+        <a class="mobile-brand" href="/">
+          <span class="brand-mark">
+            C<span>·</span>
+          </span>
+          Charming
+        </a>
+        <div class="breadcrumbs">
+          <span>个人空间</span>
+          <span class="breadcrumb-slash">/</span>
+          <strong>{title}</strong>
+        </div>
+        <div class="topbar-actions">
+          <a class="search-shortcut" href="/search/" aria-label="搜索公开文章">
+            <Icon name="search" size={17} />
+            <span>搜索文章</span>
+            <kbd>Ctrl K</kbd>
+          </a>
+          <button
+            id="theme-toggle"
+            class="icon-button"
+            aria-label="切换深浅主题"
+            title="切换深浅主题"
+          >
+            <span class="theme-sun">
+              <Icon name="sun" size={19} />
+            </span>
+            <span class="theme-moon">
+              <Icon name="moon" size={19} />
+            </span>
+          </button>
+        </div>
+      </header>
+      <nav class="mobile-nav" aria-label="移动导航" data-pagefind-ignore>
+        {navigation.map((item) => (
+          <a
+            href={item.href}
+            class:list={{ active: active === item.id }}
+            aria-current={active === item.id ? 'page' : undefined}
+          >
+            <Icon name={item.icon} size={18} />
+            {item.label}
+          </a>
+        ))}
+      </nav>
+      <main
+        id="main-content"
+        class:list={{ 'main-content': true, 'full-width': fullWidth }}
+        tabindex="-1"
+      >
+        <slot />
+      </main>
+      <footer class="site-footer" data-pagefind-ignore>
+        <span>© {new Date().getFullYear()} Charming</span>
+        <span>文字公开 · 记忆留在本机</span>
+        <a
+          href="https://github.com/Charming-Liu07/Charming-Liu07.github.io"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          GitHub <Icon name="arrowUp" size={12} />
+        </a>
+      </footer>
+    </div>
+    <script>
+      document.getElementById('theme-toggle')?.addEventListener('click', () => {
+        const theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+        document.documentElement.dataset.theme = theme;
+        try {
+          localStorage.setItem('charming-theme', theme);
+        } catch {
+          /* Theme still works if storage is unavailable. */
+        }
+      });
+      document.addEventListener('keydown', (event) => {
+        if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+          event.preventDefault();
+          window.location.href = '/search/';
+        }
+      });
+    </script>
+  </body>
+</html>

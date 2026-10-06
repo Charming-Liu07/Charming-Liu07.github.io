@@ -1,0 +1,68 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import Icon from '../components/Icon.astro';
+---
+
+<SiteLayout title="页面未找到">
+  <section class="not-found">
+    <p class="error-code">
+      404<span>·</span>
+    </p>
+    <p class="eyebrow">A SMALL DETOUR</p>
+    <h1 class="page-title">这页文字，暂时没有找到。</h1>
+    <p>
+      地址可能已经改变，也可能还没有写下。
+      <br />
+      回到首页，或搜一搜你想读的内容。
+    </p>
+    <div>
+      <a href="/" class="button">
+        回到首页 <Icon name="arrow" size={15} />
+      </a>
+      <a href="/search/" class="button button-secondary">
+        <Icon name="search" size={15} />
+        搜索文章
+      </a>
+    </div>
+  </section>
+</SiteLayout>
+<style>
+  .not-found {
+    padding: 42px 0;
+    max-width: 650px;
+  }
+  .error-code {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 110px;
+    line-height: 1;
+    margin-bottom: 28px;
+    letter-spacing: -0.08em;
+    color: var(--accent);
+  }
+  .error-code span {
+    color: var(--muted);
+  }
+  .not-found > p:last-of-type {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 27px;
+  }
+  .not-found > div {
+    display: flex;
+    gap: 12px;
+  }
+  .not-found .page-title {
+    font-size: 32px;
+  }
+  @media (max-width: 760px) {
+    .not-found {
+      padding: 25px 0;
+    }
+    .not-found .page-title {
+      font-size: 27px;
+    }
+    .error-code {
+      font-size: 90px;
+    }
+  }
+</style>
