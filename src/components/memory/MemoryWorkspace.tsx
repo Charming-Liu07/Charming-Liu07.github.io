@@ -48,6 +48,7 @@ export default function MemoryWorkspace() {
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
+  const returnFocusRef = useRef<HTMLElement | null>(null);
   const mounted = useRef(false);
   const writing = useRef(false);
   const readSerial = useRef(0);
@@ -100,10 +101,25 @@ export default function MemoryWorkspace() {
       setBusy(false);
     }
   }
+  function rememberActivator(element?: HTMLElement) {
+    const active = element ?? document.activeElement;
+    if (
+      active instanceof HTMLElement &&
+      !active.closest('.mw-dialog') &&
+      active.matches('button, a[href], input, select, textarea, [tabindex="0"]')
+    ) {
+      returnFocusRef.current = active;
+    }
+  }
   function open(next: Modal) {
+    rememberActivator();
     setError('');
     setNotice('');
     setModal(next);
+  }
+  function activateTab(next: Tab) {
+    setTab(next);
+    setQuery('');
   }
   const disabled = !hydrated || busy;
   const activeCount = library.memories.filter((entry) => entry.status === 'active').length;
@@ -232,7 +248,8 @@ export default function MemoryWorkspace() {
           <button
             className="mw-button"
             disabled={disabled}
-            onClick={() => {
+            onClick={(event) => {
+              rememberActivator(event.currentTarget);
               setError('');
               fileRef.current?.click();
             }}
@@ -317,14 +334,11 @@ export default function MemoryWorkspace() {
                       ? items.length - 1
                       : (index + (event.key === 'ArrowRight' ? 1 : -1) + items.length) %
                         items.length;
-                setTab(items[next].id);
+                activateTab(items[next].id);
                 document.getElementById(`mw-tab-${items[next].id}`)?.focus();
               }
             }}
-            onClick={() => {
-              setTab(item.id);
-              setQuery('');
-            }}
+            onClick={() => activateTab(item.id)}
           >
             <Glyph name={item.icon} size={17} />
             {item.label}
@@ -342,8 +356,9 @@ export default function MemoryWorkspace() {
         role="tabpanel"
         id={`mw-panel-${tab}`}
         aria-labelledby={`mw-tab-${tab}`}
+        aria-busy={!hydrated}
       >
-        {tab === 'memories' && (
+        {hydrated && tab === 'memories' && (
           <div className="mw-memory-layout">
             <div className="mw-library">
               <div className="mw-section-heading">
@@ -351,108 +366,112 @@ export default function MemoryWorkspace() {
                   <h2>我的记忆</h2>
                   <p>{activeCount} 条有效记忆 · 每一条都由你决定保留</p>
                 </div>
-                <button
-                  className="mw-text-button"
-                  disabled={disabled}
-                  onClick={() =>
-                    setSelected(
-                      filtered
-                        .filter((entry) => entry.status === 'active')
-                        .map((entry) => entry.id),
-                    )
-                  }
-                >
-                  选择当前有效记忆
-                </button>
-              </div>
-              <div className="mw-filters">
-                <label className="mw-search">
-                  <Glyph name="search" size={17} />
-                  <input
-                    aria-label="搜索记忆"
-                    value={query}
-                    onChange={(event) => setQuery(event.target.value)}
-                    placeholder="搜索标题、摘要或标签"
-                  />
-                </label>
-                <div className="mw-filter-row">
-                  <select
-                    aria-label="筛选记忆类型"
-                    value={kind}
-                    onChange={(event) => setKind(event.target.value)}
+                {library.memories.length > 0 && (
+                  <button
+                    className="mw-text-button"
+                    disabled={disabled}
+                    onClick={() =>
+                      setSelected(
+                        filtered
+                          .filter((entry) => entry.status === 'active')
+                          .map((entry) => entry.id),
+                      )
+                    }
                   >
-                    <option value="">全部类型</option>
-                    {Object.entries(kindNames).map(([key, value]) => (
-                      <option value={key} key={key}>
-                        {value}
-                      </option>
-                    ))}
-                  </select>
-                  <select
-                    aria-label="筛选记忆状态"
-                    value={status}
-                    onChange={(event) => setStatus(event.target.value)}
-                  >
-                    <option value="active">有效记忆</option>
-                    <option value="expired">已过期</option>
-                    <option value="">全部状态</option>
-                  </select>
-                  <select
-                    aria-label="筛选项目"
-                    value={project}
-                    onChange={(event) => setProject(event.target.value)}
-                  >
-                    <option value="">全部项目</option>
-                    {projects.map((item) => (
-                      <option key={item}>{item}</option>
-                    ))}
-                  </select>
-                  <select
-                    aria-label="筛选标签"
-                    value={tag}
-                    onChange={(event) => setTag(event.target.value)}
-                  >
-                    <option value="">全部标签</option>
-                    {tags.map((item) => (
-                      <option key={item}>{item}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="mw-date-filters">
-                  <label>
-                    更新自
-                    <input
-                      type="date"
-                      value={updatedFrom}
-                      onChange={(event) => setUpdatedFrom(event.target.value)}
-                      aria-invalid={Boolean(dateRangeError)}
-                      aria-describedby={
-                        dateRangeError ? 'mw-date-range-error mw-date-help' : 'mw-date-help'
-                      }
-                    />
-                  </label>
-                  <label>
-                    更新至
-                    <input
-                      type="date"
-                      value={updatedTo}
-                      onChange={(event) => setUpdatedTo(event.target.value)}
-                      aria-invalid={Boolean(dateRangeError)}
-                      aria-describedby={
-                        dateRangeError ? 'mw-date-range-error mw-date-help' : 'mw-date-help'
-                      }
-                    />
-                  </label>
-                </div>
-                <p className="mw-date-help" id="mw-date-help">
-                  按 UTC 日期筛选，包含起止当天；留空不限。
-                </p>
-                {dateRangeError && (
-                  <div className="mw-feedback error" id="mw-date-range-error" role="alert">
-                    {dateRangeError}
-                  </div>
+                    选择当前有效记忆
+                  </button>
                 )}
               </div>
+              {library.memories.length > 0 && (
+                <div className="mw-filters">
+                  <label className="mw-search">
+                    <Glyph name="search" size={17} />
+                    <input
+                      aria-label="搜索记忆"
+                      value={query}
+                      onChange={(event) => setQuery(event.target.value)}
+                      placeholder="搜索标题、摘要或标签"
+                    />
+                  </label>
+                  <div className="mw-filter-row">
+                    <select
+                      aria-label="筛选记忆类型"
+                      value={kind}
+                      onChange={(event) => setKind(event.target.value)}
+                    >
+                      <option value="">全部类型</option>
+                      {Object.entries(kindNames).map(([key, value]) => (
+                        <option value={key} key={key}>
+                          {value}
+                        </option>
+                      ))}
+                    </select>
+                    <select
+                      aria-label="筛选记忆状态"
+                      value={status}
+                      onChange={(event) => setStatus(event.target.value)}
+                    >
+                      <option value="active">有效记忆</option>
+                      <option value="expired">已过期</option>
+                      <option value="">全部状态</option>
+                    </select>
+                    <select
+                      aria-label="筛选项目"
+                      value={project}
+                      onChange={(event) => setProject(event.target.value)}
+                    >
+                      <option value="">全部项目</option>
+                      {projects.map((item) => (
+                        <option key={item}>{item}</option>
+                      ))}
+                    </select>
+                    <select
+                      aria-label="筛选标签"
+                      value={tag}
+                      onChange={(event) => setTag(event.target.value)}
+                    >
+                      <option value="">全部标签</option>
+                      {tags.map((item) => (
+                        <option key={item}>{item}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="mw-date-filters">
+                    <label>
+                      更新自
+                      <input
+                        type="date"
+                        value={updatedFrom}
+                        onChange={(event) => setUpdatedFrom(event.target.value)}
+                        aria-invalid={Boolean(dateRangeError)}
+                        aria-describedby={
+                          dateRangeError ? 'mw-date-range-error mw-date-help' : 'mw-date-help'
+                        }
+                      />
+                    </label>
+                    <label>
+                      更新至
+                      <input
+                        type="date"
+                        value={updatedTo}
+                        onChange={(event) => setUpdatedTo(event.target.value)}
+                        aria-invalid={Boolean(dateRangeError)}
+                        aria-describedby={
+                          dateRangeError ? 'mw-date-range-error mw-date-help' : 'mw-date-help'
+                        }
+                      />
+                    </label>
+                  </div>
+                  <p className="mw-date-help" id="mw-date-help">
+                    按 UTC 日期筛选，包含起止当天；留空不限。
+                  </p>
+                  {dateRangeError && (
+                    <div className="mw-feedback error" id="mw-date-range-error" role="alert">
+                      {dateRangeError}
+                    </div>
+                  )}
+                </div>
+              )}
               {filtered.length ? (
                 <div className="mw-cards">
                   {filtered.map((entry) => (
@@ -570,7 +589,7 @@ export default function MemoryWorkspace() {
                 </div>
               )}
             </div>
-            <aside className="mw-context">
+            <aside className={`mw-context${library.memories.length ? '' : ' is-empty'}`}>
               <div className="mw-context-heading">
                 <div className="mw-eyebrow">CONTEXT</div>
                 <h2>带上需要的记忆</h2>
@@ -630,7 +649,7 @@ export default function MemoryWorkspace() {
             </aside>
           </div>
         )}
-        {tab === 'conversations' && (
+        {hydrated && tab === 'conversations' && (
           <div className="mw-conversations">
             <div className="mw-section-heading">
               <div>
@@ -721,7 +740,7 @@ export default function MemoryWorkspace() {
             )}
           </div>
         )}
-        {tab === 'backup' && (
+        {hydrated && tab === 'backup' && (
           <div className="mw-backup">
             <div className="mw-section-heading">
               <div>
@@ -766,7 +785,10 @@ export default function MemoryWorkspace() {
                 <button
                   className="mw-button"
                   disabled={disabled}
-                  onClick={() => fileRef.current?.click()}
+                  onClick={(event) => {
+                    rememberActivator(event.currentTarget);
+                    fileRef.current?.click();
+                  }}
                 >
                   <Glyph name="upload" size={16} />
                   选择备份文件
@@ -806,6 +828,7 @@ export default function MemoryWorkspace() {
           onClose={() => {
             if (!busy) setModal(null);
           }}
+          returnFocus={returnFocusRef.current}
         >
           {error && (
             <div className="mw-feedback error" role="alert">

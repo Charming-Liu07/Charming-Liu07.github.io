@@ -57,11 +57,11 @@ const articles = (await getCollection('blog')).sort(
     align-items: center;
     justify-content: space-between;
     margin-bottom: 20px;
-    font-size: 11px;
+    font-size: 14px;
     color: var(--muted);
   }
   .article-toolbar strong {
-    font-size: 10px;
+    font-size: 14px;
     font-weight: 500;
     margin-left: 8px;
     background: var(--surface-soft);
@@ -75,6 +75,7 @@ const articles = (await getCollection('blog')).sort(
   .article-toolbar a {
     display: flex;
     align-items: center;
+    min-height: 44px;
     gap: 6px;
   }
   .article-toolbar a:hover {
@@ -86,7 +87,7 @@ const articles = (await getCollection('blog')).sort(
     padding-top: 22px;
     display: flex;
     justify-content: space-between;
-    font-size: 11px;
+    font-size: 14px;
     color: var(--muted);
   }
   .subscribe-note p {
@@ -95,6 +96,7 @@ const articles = (await getCollection('blog')).sort(
   .subscribe-note a {
     display: flex;
     align-items: center;
+    min-height: 44px;
     gap: 8px;
     color: var(--accent);
   }

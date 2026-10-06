@@ -64,16 +64,35 @@ export function Dialog({
   title,
   children,
   onClose,
+  returnFocus,
 }: {
   title: string;
   children: ReactNode;
   onClose: () => void;
+  returnFocus: HTMLElement | null;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   useEffect(() => {
     const dialog = ref.current;
     dialog?.showModal();
-    return () => dialog?.close();
+    const firstField = dialog?.querySelector<HTMLElement>(
+      'input:not([type="hidden"]), textarea, select',
+    );
+    (firstField ?? dialog?.querySelector<HTMLElement>('button'))?.focus();
+    return () => {
+      dialog?.close();
+      queueMicrotask(() => {
+        // A replacement dialog may open during the same React commit.
+        if (document.querySelector('.mw-dialog[open]')) return;
+        const target =
+          returnFocus?.isConnected && !returnFocus.matches(':disabled')
+            ? returnFocus
+            : document.querySelector<HTMLElement>(
+                '.mw-header-actions .primary:not(:disabled), .mw-tabs button[aria-selected="true"]',
+              );
+        target?.focus();
+      });
+    };
   }, []);
   return (
     <dialog

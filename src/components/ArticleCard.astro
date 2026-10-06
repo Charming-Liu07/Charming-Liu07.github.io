@@ -12,16 +12,16 @@ const date = article.data.date.toISOString().slice(0, 10);
 <article class:list={{ card: true, 'article-card': true, featured }}>
   <div class="article-meta">
     <span class="article-type">
-      <Icon name="book" size={14} />
+      <Icon name="book" size={17} />
       随笔
     </span>
     <time datetime={date}>{date}</time>
   </div>
   <h3>
-    <a href={`/post/${article.id}/`}>
+    <a class="article-title" href={`/post/${article.id}/`}>
       {article.data.title}
       <span class="article-arrow">
-        <Icon name="arrowUp" size={18} />
+        <Icon name="arrow" size={23} />
       </span>
     </a>
   </h3>
@@ -39,95 +39,165 @@ const date = article.data.date.toISOString().slice(0, 10);
       <span class="article-author">Charming</span>
     )}
     <a class="read-link" href={`/post/${article.id}/`}>
-      阅读文章 <Icon name="arrow" size={14} />
+      阅读文章 <Icon name="arrow" size={18} />
     </a>
   </div>
 </article>
 <style>
   .article-card {
-    padding: 26px 27px;
+    position: relative;
+    min-width: 0;
+    padding: clamp(24px, 2.5vw, 34px);
     display: flex;
     flex-direction: column;
-    min-height: 221px;
     transition:
-      border-color 0.2s,
-      transform 0.2s;
+      border-color 0.3s,
+      transform 0.3s var(--ease-out),
+      box-shadow 0.3s;
   }
-  .article-card:hover {
+  .article-card:focus-within {
     border-color: var(--accent);
-    transform: translateY(-2px);
   }
   .article-meta {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    font-size: 10px;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    font-size: 14px;
     color: var(--muted);
-    margin-bottom: 23px;
+    margin-bottom: 29px;
+  }
+  .article-meta time {
+    font-variant-numeric: tabular-nums;
   }
   .article-type {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
   }
   .article-card h3 {
-    font-size: 22px;
-    margin: 0 0 12px;
-    letter-spacing: -0.025em;
+    font-family: 'Songti SC', STSong, SimSun, serif;
+    font-size: clamp(27px, 2.5vw, 34px);
+    font-weight: 600;
+    line-height: 1.4;
+    margin: 0 0 16px;
+    letter-spacing: -0.04em;
+    overflow-wrap: anywhere;
   }
-  .article-card h3 a {
+  .article-title {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 20px;
   }
-  .article-arrow {
-    color: var(--muted);
-    transition: color 0.2s;
+  .article-title::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: var(--radius);
   }
-  .article-card:hover .article-arrow {
+  .article-title:focus-visible {
+    outline: none;
+  }
+  .article-title:focus-visible::after {
+    outline: 3px solid var(--accent);
+    outline-offset: 5px;
+  }
+  .article-arrow {
     color: var(--accent);
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition:
+      background 0.3s,
+      transform 0.3s var(--ease-out);
   }
   .article-card p {
-    font-size: 12px;
+    font-size: 16px;
     color: var(--muted);
-    margin: 0 0 28px;
+    margin: 0 0 26px;
     flex: 1;
+    overflow-wrap: anywhere;
+    text-wrap: pretty;
   }
   .article-bottom {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
     gap: 12px;
+    border-top: 1px solid var(--border);
+    padding-top: 14px;
   }
   .article-tags {
+    position: relative;
+    z-index: 2;
+    pointer-events: none;
     display: flex;
-    gap: 5px;
+    gap: 6px;
     flex-wrap: wrap;
+    min-width: 0;
+  }
+  .article-tags a {
+    pointer-events: auto;
+    min-height: 44px;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+    max-width: 100%;
   }
   .article-author {
     color: var(--muted);
-    font-size: 10px;
+    font-size: 14px;
   }
   .read-link {
+    position: relative;
+    z-index: 2;
+    min-height: 44px;
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 10px;
+    gap: 9px;
+    font-size: 14px;
     color: var(--accent);
     white-space: nowrap;
   }
   .featured {
-    min-height: 239px;
+    min-height: 314px;
   }
-  .featured h3 {
-    font-size: 24px;
+  @media (hover: hover) and (pointer: fine) {
+    .article-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+      box-shadow: 0 22px 40px -30px color-mix(in srgb, var(--accent) 45%, transparent);
+    }
+    .article-card:hover .article-arrow {
+      background: var(--accent-soft);
+      transform: rotate(-8deg);
+    }
+    .article-tags a:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+  }
+  .article-card:has(.article-title:active),
+  .article-card:has(.read-link:active) {
+    transform: translateY(0);
+    background: var(--surface-soft);
   }
   @media (max-width: 760px) {
     .article-card {
-      padding: 22px;
-      min-height: 211px;
+      padding: 24px;
+    }
+    .article-meta {
+      margin-bottom: 25px;
+    }
+    .featured {
+      min-height: 290px;
     }
   }
 </style>
