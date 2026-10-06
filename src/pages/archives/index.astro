@@ -1,0 +1,103 @@
+---
+import { getCollection } from 'astro:content';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import Icon from '../../components/Icon.astro';
+const articles = (await getCollection('blog')).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
+const years = [...new Set(articles.map((article) => article.data.date.getUTCFullYear()))];
+---
+
+<SiteLayout title="归档" active="blog" description="按时间浏览 Charming 的所有公开文章。">
+  <header class="page-header">
+    <p class="eyebrow">THROUGH THE YEARS</p>
+    <h1 class="page-title">时间里的文字。</h1>
+    <p>共 {articles.length} 篇文章。每次落笔，都留下了一点痕迹。</p>
+  </header>
+  <div class="archive-list">
+    {years.map((year) => (
+      <section class="archive-year">
+        <div class="year-heading">
+          <h2>{year}</h2>
+          <span>
+            {articles.filter((article) => article.data.date.getUTCFullYear() === year).length} 篇
+          </span>
+        </div>
+        <ul>
+          {articles
+            .filter((article) => article.data.date.getUTCFullYear() === year)
+            .map((article) => (
+              <li>
+                <time datetime={article.data.date.toISOString().slice(0, 10)}>
+                  {article.data.date.toISOString().slice(5, 10)}
+                </time>
+                <a href={`/post/${article.id}/`}>
+                  {article.data.title}
+                  <Icon name="arrowUp" size={16} />
+                </a>
+              </li>
+            ))}
+        </ul>
+      </section>
+    ))}
+  </div>
+  <a class="button button-secondary archive-back" href="/blog/">
+    浏览全部文章 <Icon name="arrow" size={15} />
+  </a>
+</SiteLayout>
+<style>
+  .archive-list {
+    max-width: 760px;
+  }
+  .archive-year {
+    margin-bottom: 36px;
+  }
+  .year-heading {
+    display: flex;
+    align-items: baseline;
+    gap: 13px;
+    margin-bottom: 15px;
+  }
+  .year-heading h2 {
+    font-size: 25px;
+    margin: 0;
+  }
+  .year-heading span {
+    font-size: 10px;
+    color: var(--muted);
+  }
+  .archive-year ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-top: 1px solid var(--border);
+  }
+  .archive-year li {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    border-bottom: 1px solid var(--border);
+    padding: 21px 0;
+  }
+  .archive-year time {
+    font-size: 11px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .archive-year a {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 15px;
+  }
+  .archive-year a:hover {
+    color: var(--accent);
+  }
+  .archive-year a svg {
+    color: var(--muted);
+  }
+  .archive-back {
+    margin-top: 10px;
+  }
+</style>

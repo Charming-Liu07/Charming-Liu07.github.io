@@ -1,0 +1,165 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import Icon from '../../components/Icon.astro';
+---
+
+<SiteLayout
+  title="关于"
+  description="你好，我是 Charming。这里是我的个人博客，也是一个在本机整理对话与记忆的空间。"
+  active="about"
+>
+  <header class="page-header">
+    <p class="eyebrow">A LITTLE ABOUT THIS SPACE</p>
+    <h1 class="page-title">你好，我是 Charming。</h1>
+    <p>欢迎来到我的小站呀，很高兴遇见你！🤝</p>
+  </header>
+  <section class="about-intro card">
+    <img src="/images/avatar.png" alt="Charming 的头像" width="88" height="88" />
+    <div>
+      <h2>一个可以停下来，写一点东西的地方。</h2>
+      <p>
+        这里有公开的文字，也有整理对话和想法的本机记忆库。希望每一次记录，都能让下一次回望更清楚一些。
+      </p>
+      <a href="/post/about/">
+        阅读最初的「关于」 <Icon name="arrow" size={15} />
+      </a>
+    </div>
+  </section>
+  <div class="about-columns">
+    <section>
+      <span class="about-icon">
+        <Icon name="book" size={24} />
+      </span>
+      <h2>文字，留给阅读的人。</h2>
+      <p>博客文章公开可见。你可以按时间或标签浏览，也可以通过 RSS 订阅。</p>
+      <a href="/blog/">
+        去看看文章 <Icon name="arrow" size={14} />
+      </a>
+    </section>
+    <section>
+      <span class="about-icon">
+        <Icon name="memory" size={24} />
+      </span>
+      <h2>记忆，留给接下来的自己。</h2>
+      <p>
+        导入 AI
+        对话，整理有用的信息，再把选中的记忆带进下一次对话。数据保存在当前浏览器，请定期导出备份。
+      </p>
+      <a href="/memory/">
+        打开本机记忆库 <Icon name="arrow" size={14} />
+      </a>
+    </section>
+  </div>
+  <div class="about-links">
+    <a href="https://github.com/Charming-Liu07" target="_blank" rel="noopener noreferrer">
+      <Icon name="github" size={17} />
+      GitHub <Icon name="arrowUp" size={13} />
+    </a>
+    <a href="/atom.xml">
+      订阅 RSS <Icon name="arrowUp" size={13} />
+    </a>
+    <span>cjdl！啦啦啦</span>
+  </div>
+</SiteLayout>
+<style>
+  .about-intro {
+    display: flex;
+    gap: 28px;
+    padding: 32px;
+    margin-bottom: 31px;
+    align-items: flex-start;
+  }
+  .about-intro img {
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: var(--surface-soft);
+  }
+  .about-intro h2 {
+    font-size: 21px;
+    margin-bottom: 13px;
+  }
+  .about-intro p {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.95;
+    max-width: 560px;
+    margin-bottom: 17px;
+  }
+  .about-intro a,
+  .about-columns a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--accent);
+  }
+  .about-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 39px;
+    padding: 9px 4px 35px;
+    border-bottom: 1px solid var(--border);
+  }
+  .about-icon {
+    color: var(--accent);
+    display: block;
+    margin-bottom: 15px;
+  }
+  .about-columns h2 {
+    font-size: 17px;
+    margin-bottom: 12px;
+  }
+  .about-columns p {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.95;
+    margin-bottom: 16px;
+  }
+  .about-links {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-top: 24px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .about-links a {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .about-links a:hover {
+    color: var(--accent);
+  }
+  .about-links > span {
+    margin-left: auto;
+    font-size: 10px;
+  }
+  @media (max-width: 760px) {
+    .about-intro {
+      padding: 24px;
+      gap: 19px;
+      flex-direction: column;
+    }
+    .about-intro img {
+      width: 67px;
+      height: 67px;
+    }
+    .about-intro h2 {
+      font-size: 20px;
+    }
+    .about-columns {
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+    .about-links {
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .about-links > span {
+      margin-left: 0;
+      width: 100%;
+    }
+  }
+</style>

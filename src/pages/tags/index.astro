@@ -1,0 +1,140 @@
+---
+import { getCollection } from 'astro:content';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import Icon from '../../components/Icon.astro';
+const articles = (await getCollection('blog')).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
+const tags = [...new Set(articles.flatMap((article) => article.data.tags))].sort((a, b) =>
+  a.localeCompare(b, 'zh-CN'),
+);
+---
+
+<SiteLayout title="标签" description="按标签浏览 Charming 的公开文章。" active="blog">
+  <header class="page-header">
+    <p class="eyebrow">FOLLOW A THREAD</p>
+    <h1 class="page-title">沿着一个主题，继续读。</h1>
+    <p>标签把有关联的文字放在一起。</p>
+  </header>
+  {tags.length > 0 ? (
+    <>
+      <nav class="tag-cloud" aria-label="文章标签">
+        {tags.map((tag) => (
+          <a class="pill" href={`#${encodeURIComponent(tag)}`}>
+            # {tag}
+            <span>{articles.filter((article) => article.data.tags.includes(tag)).length}</span>
+          </a>
+        ))}
+      </nav>
+      <div class="tag-groups">
+        {tags.map((tag) => (
+          <section id={tag} class="tag-group">
+            <h2>
+              <Icon name="tag" size={18} />
+              {tag}
+            </h2>
+            <ul>
+              {articles
+                .filter((article) => article.data.tags.includes(tag))
+                .map((article) => (
+                  <li>
+                    <a href={`/post/${article.id}/`}>
+                      {article.data.title}
+                      <time datetime={article.data.date.toISOString().slice(0, 10)}>
+                        {article.data.date.toISOString().slice(0, 10)}
+                      </time>
+                    </a>
+                  </li>
+                ))}
+            </ul>
+          </section>
+        ))}
+      </div>
+    </>
+  ) : (
+    <div class="empty-state card">
+      <span class="empty-icon">
+        <Icon name="tag" size={29} />
+      </span>
+      <h2>还没有文章标签。</h2>
+      <p>现有文章未设置标签，你可以先按时间浏览。</p>
+      <a href="/archives/" class="button button-secondary">
+        前往文章归档 <Icon name="arrow" size={15} />
+      </a>
+    </div>
+  )}
+</SiteLayout>
+<style>
+  .tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 39px;
+  }
+  .tag-cloud a {
+    font-size: 12px;
+    padding: 7px 12px;
+  }
+  .tag-cloud a:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+  .tag-cloud span {
+    margin-left: 9px;
+    font-size: 10px;
+  }
+  .tag-groups {
+    max-width: 760px;
+  }
+  .tag-group {
+    margin-bottom: 36px;
+    scroll-margin-top: 25px;
+  }
+  .tag-group h2 {
+    display: flex;
+    gap: 9px;
+    align-items: center;
+    font-size: 19px;
+  }
+  .tag-group h2 svg {
+    color: var(--accent);
+  }
+  .tag-group ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--border);
+  }
+  .tag-group li {
+    border-bottom: 1px solid var(--border);
+  }
+  .tag-group a {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 18px 0;
+  }
+  .tag-group a:hover {
+    color: var(--accent);
+  }
+  .tag-group time {
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .empty-state {
+    max-width: 700px;
+    padding: 49px 25px;
+  }
+  .empty-icon {
+    display: block;
+    color: var(--accent);
+    margin-bottom: 17px;
+  }
+  .empty-state h2 {
+    font-size: 19px;
+  }
+  .empty-state p {
+    font-size: 12px;
+    margin-bottom: 22px;
+  }
+</style>

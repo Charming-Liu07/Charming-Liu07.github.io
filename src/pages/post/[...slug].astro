@@ -1,0 +1,283 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import Icon from '../../components/Icon.astro';
+export const getStaticPaths = (async () => {
+  const articles = await getCollection('blog');
+  return articles.map((article) => ({ params: { slug: article.id }, props: { article } }));
+}) satisfies GetStaticPaths;
+interface Props {
+  article: CollectionEntry<'blog'>;
+}
+const { article } = Astro.props;
+const { Content, headings } = await render(article);
+const date = article.data.date.toISOString().slice(0, 10);
+const toc = headings.filter((heading) => heading.depth <= 3);
+---
+
+<SiteLayout title={article.data.title} description={article.data.description} active="blog">
+  <a class="back-link" href="/blog/">
+    <span>←</span> 返回文章
+  </a>
+  <div class:list={{ 'post-layout': true, 'with-toc': toc.length > 0 }}>
+    <article class="post" data-pagefind-body>
+      <header class="post-header">
+        <p class="eyebrow">CHARMING'S WRITING</p>
+        <h1 data-pagefind-meta="title">{article.data.title}</h1>
+        <div class="post-meta">
+          <span>Charming</span>
+          <span class="meta-dot">·</span>
+          <time datetime={date}>{date}</time>
+          {article.data.tags.map((tag) => (
+            <a class="pill" href={`/tags/#${encodeURIComponent(tag)}`}>
+              {tag}
+            </a>
+          ))}
+        </div>
+      </header>
+      <div class="post-content">
+        <Content />
+      </div>
+      <footer class="post-footer" data-pagefind-ignore>
+        <span>谢谢你在这里停留。</span>
+        <a href="/blog/">
+          继续阅读 <Icon name="arrow" size={15} />
+        </a>
+      </footer>
+    </article>
+    {toc.length > 0 && (
+      <aside class="toc" aria-label="文章目录" data-pagefind-ignore>
+        <p>文章目录</p>
+        <nav>
+          {toc.map((heading) => (
+            <a href={`#${heading.slug}`} class:list={{ subheading: heading.depth === 3 }}>
+              {heading.text}
+            </a>
+          ))}
+        </nav>
+      </aside>
+    )}
+  </div>
+</SiteLayout>
+<style>
+  .back-link {
+    display: inline-flex;
+    gap: 9px;
+    align-items: center;
+    color: var(--muted);
+    font-size: 11px;
+    margin-bottom: 35px;
+  }
+  .back-link:hover {
+    color: var(--accent);
+  }
+  .back-link span {
+    font-size: 17px;
+  }
+  .post-layout {
+    max-width: 780px;
+  }
+  .with-toc {
+    max-width: none;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 172px;
+    gap: 44px;
+  }
+  .post-header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 29px;
+    margin-bottom: 35px;
+  }
+  .post-header h1 {
+    font-size: clamp(34px, 5vw, 48px);
+    line-height: 1.4;
+    margin-bottom: 18px;
+    letter-spacing: -0.05em;
+  }
+  .post-header .eyebrow {
+    margin-bottom: 15px;
+  }
+  .post-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 10px;
+    color: var(--muted);
+  }
+  .meta-dot {
+    opacity: 0.6;
+  }
+  .post-content {
+    font-size: 15px;
+    line-height: 1.95;
+    min-height: 180px;
+  }
+  .post-content :global(p) {
+    margin-bottom: 23px;
+    line-height: 1.95;
+  }
+  .post-content :global(h2) {
+    font-size: 27px;
+    margin: 40px 0 18px;
+    scroll-margin-top: 25px;
+  }
+  .post-content :global(h3) {
+    font-size: 21px;
+    margin: 31px 0 15px;
+    scroll-margin-top: 25px;
+  }
+  .post-content :global(h4) {
+    font-size: 17px;
+    margin: 25px 0 12px;
+  }
+  .post-content :global(a) {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .post-content :global(blockquote) {
+    margin: 0 0 28px;
+    padding: 17px 23px;
+    background: var(--accent-soft);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 9px 9px 0;
+    color: var(--accent);
+  }
+  .post-content :global(blockquote p:last-child) {
+    margin-bottom: 0;
+  }
+  .post-content :global(ul),
+  .post-content :global(ol) {
+    padding-left: 24px;
+    margin-bottom: 25px;
+  }
+  .post-content :global(li) {
+    margin-bottom: 8px;
+  }
+  .post-content :global(pre) {
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    overflow: auto;
+    font-size: 12px;
+    line-height: 1.8;
+  }
+  .post-content :global(code) {
+    font-family: 'SFMono-Regular', Consolas, monospace;
+    font-size: 0.87em;
+  }
+  .post-content :global(:not(pre) > code) {
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+    padding: 2px 5px;
+    border-radius: 4px;
+  }
+  .post-content :global(img) {
+    display: block;
+    height: auto;
+    border-radius: 10px;
+    margin: 28px auto;
+  }
+  .post-content :global(table) {
+    display: block;
+    overflow: auto;
+    border-collapse: collapse;
+    width: 100%;
+    margin: 25px 0;
+    font-size: 13px;
+  }
+  .post-content :global(th),
+  .post-content :global(td) {
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+  }
+  .post-content :global(th) {
+    background: var(--surface-soft);
+  }
+  .post-content :global(hr) {
+    border: 0;
+    border-top: 1px solid var(--border);
+    margin: 40px 0;
+  }
+  .post-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+    padding-top: 22px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .post-footer a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--accent);
+  }
+  .toc {
+    position: sticky;
+    top: 35px;
+    align-self: start;
+    padding-left: 20px;
+    border-left: 1px solid var(--border);
+    font-size: 10px;
+  }
+  .toc > p {
+    color: var(--muted);
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    margin-bottom: 16px;
+  }
+  .toc nav {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .toc a:hover {
+    color: var(--accent);
+  }
+  .toc .subheading {
+    padding-left: 10px;
+    color: var(--muted);
+  }
+  @media (max-width: 950px) {
+    .with-toc {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+    .toc {
+      position: static;
+      order: -1;
+      padding: 15px 20px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      width: 100%;
+    }
+    .toc nav {
+      gap: 8px;
+    }
+    .toc > p {
+      margin-bottom: 8px;
+    }
+  }
+  @media (max-width: 760px) {
+    .back-link {
+      margin-bottom: 24px;
+    }
+    .post-header {
+      padding-bottom: 23px;
+      margin-bottom: 28px;
+    }
+    .post-content {
+      font-size: 14px;
+    }
+    .post-content :global(blockquote) {
+      padding: 16px 18px;
+    }
+  }
+</style>

@@ -1,0 +1,198 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import Icon from '../../components/Icon.astro';
+---
+
+<SiteLayout title="搜索" description="搜索 Charming 的公开博客文章。" active="blog">
+  <header class="page-header">
+    <p class="eyebrow">FIND THE WORDS</p>
+    <h1 class="page-title">找回一段文字。</h1>
+    <p>输入关键词，搜索公开文章。你的本机对话与记忆在记忆库里单独搜索。</p>
+  </header>
+  <section class="search-panel" data-pagefind-ignore>
+    <form id="article-search" role="search">
+      <label for="search-query">文章关键词</label>
+      <div class="search-field">
+        <Icon name="search" size={20} />
+        <input
+          id="search-query"
+          type="search"
+          name="q"
+          placeholder="试试搜索「关于」或「欢迎」"
+          autocomplete="off"
+        />
+        <button class="button" type="submit">
+          搜索
+        </button>
+      </div>
+    </form>
+    <p id="search-status" class="search-status" role="status" aria-live="polite">
+      输入关键词，开始寻找。
+    </p>
+    <ul id="search-results" class="search-results"></ul>
+    <noscript>
+      <p class="card no-script">
+        搜索需要启用 JavaScript。你也可以<a href="/archives/">浏览全部文章</a>。
+      </p>
+    </noscript>
+  </section>
+</SiteLayout>
+<script is:inline type="module">
+  const form = document.querySelector('#article-search');
+  const input = document.querySelector('#search-query');
+  const status = document.querySelector('#search-status');
+  const list = document.querySelector('#search-results');
+  let sequence = 0;
+  let timer;
+  let searchModule;
+  async function search() {
+    if (!input || !status || !list) return;
+    const query = input.value.trim();
+    const current = ++sequence;
+    list.replaceChildren();
+    const url = new URL(window.location.href);
+    query ? url.searchParams.set('q', query) : url.searchParams.delete('q');
+    history.replaceState(null, '', url);
+    if (!query) {
+      status.textContent = '输入关键词，开始寻找。';
+      return;
+    }
+    status.textContent = '正在寻找…';
+    try {
+      // Pagefind is generated after Astro builds, so load it in the browser.
+      searchModule ??= import('/pagefind/pagefind.js');
+      const pagefind = await searchModule;
+      const result = await pagefind.search(query);
+      const matches = await Promise.all(result.results.map((match) => match.data()));
+      if (current !== sequence) return;
+      const publicMatches = matches.filter(
+        (match) => !new URL(match.url, location.origin).pathname.startsWith('/memory/'),
+      );
+      status.textContent = publicMatches.length
+        ? `找到 ${publicMatches.length} 条结果。`
+        : '暂时没有找到相关文字，换个关键词试试。';
+      for (const match of publicMatches) {
+        const item = document.createElement('li');
+        item.className = 'card search-result';
+        const link = document.createElement('a');
+        link.href = match.url;
+        const title = document.createElement('h2');
+        title.textContent = match.meta.title || '阅读文章';
+        const excerpt = document.createElement('p');
+        const excerptDocument = new DOMParser().parseFromString(match.excerpt || '', 'text/html');
+        excerpt.textContent = excerptDocument.body.textContent;
+        const path = document.createElement('span');
+        path.className = 'result-path';
+        path.textContent = new URL(match.url, location.origin).pathname;
+        link.append(title, excerpt, path);
+        item.append(link);
+        list.append(item);
+      }
+    } catch {
+      if (current === sequence)
+        status.textContent = '搜索索引暂时不可用，请稍后重试，或通过文章归档浏览。';
+    }
+  }
+  form?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    clearTimeout(timer);
+    void search();
+  });
+  input?.addEventListener('input', () => {
+    clearTimeout(timer);
+    timer = setTimeout(() => void search(), 220);
+  });
+  const initialQuery = new URL(window.location.href).searchParams.get('q');
+  if (input && initialQuery) {
+    input.value = initialQuery;
+    void search();
+  }
+</script>
+<style>
+  .search-panel {
+    max-width: 760px;
+  }
+  .search-panel label {
+    display: block;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .search-field {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 9px 10px 9px 18px;
+  }
+  .search-field > svg {
+    color: var(--muted);
+  }
+  .search-field input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    padding: 7px 0;
+    font-size: 13px;
+    border-radius: 3px;
+  }
+  .search-field .button {
+    padding: 9px 19px;
+  }
+  .search-status {
+    font-size: 11px;
+    color: var(--muted);
+    margin: 18px 0 23px;
+  }
+  .search-results {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .search-results :global(.search-result a) {
+    display: block;
+    padding: 22px 25px;
+  }
+  .search-results :global(.search-result:hover) {
+    border-color: var(--accent);
+  }
+  .search-results :global(h2) {
+    font-size: 19px;
+    margin-bottom: 9px;
+  }
+  .search-results :global(p) {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+  .search-results :global(.result-path) {
+    font-size: 10px;
+    color: var(--accent);
+  }
+  .no-script {
+    padding: 22px;
+    font-size: 12px;
+  }
+  .no-script a {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+  @media (max-width: 760px) {
+    .search-field {
+      gap: 9px;
+      padding-left: 13px;
+    }
+    .search-field input {
+      font-size: 12px;
+    }
+    .search-field .button {
+      padding: 9px 14px;
+    }
+  }
+</style>

@@ -1,0 +1,13 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import MemoryWorkspace from '../../components/memory/MemoryWorkspace';
+---
+
+<SiteLayout
+  title="记忆工作区"
+  description="只保存在当前浏览器的私人对话与记忆工作区。"
+  active="memory"
+  fullWidth
+>
+  <MemoryWorkspace client:load />
+</SiteLayout>
