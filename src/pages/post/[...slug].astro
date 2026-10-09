@@ -3,6 +3,7 @@ import { getCollection, render, type CollectionEntry } from 'astro:content';
 import type { GetStaticPaths } from 'astro';
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import Icon from '../../components/Icon.astro';
+import ArticleToc from '../../components/ArticleToc.astro';
 export const getStaticPaths = (async () => {
   const articles = await getCollection('blog');
   return articles.map((article) => ({ params: { slug: article.id }, props: { article } }));
@@ -13,10 +14,19 @@ interface Props {
 const { article } = Astro.props;
 const { Content, headings } = await render(article);
 const date = article.data.date.toISOString().slice(0, 10);
+const updated = article.data.updated?.toISOString().slice(0, 10);
 const toc = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
 ---
 
-<SiteLayout title={article.data.title} description={article.data.description} active="blog">
+<SiteLayout
+  title={article.data.title}
+  description={article.data.description}
+  active="blog"
+  article={{
+    publishedTime: article.data.date.toISOString(),
+    modifiedTime: article.data.updated?.toISOString(),
+  }}
+>
   <div class="reading-bar">
     <a class="text-link" href="/blog/">
       <span>←</span>返回文章
@@ -31,6 +41,11 @@ const toc = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 
         <div class="post-meta">
           <span>BY CHARMING</span>
           <time datetime={date}>{date}</time>
+          {updated && (
+            <span>
+              更新于 <time datetime={updated}>{updated}</time>
+            </span>
+          )}
           {article.data.tags.map((tag) => (
             <a class="pill" href={`/tags/#${encodeURIComponent(tag)}`}>
               # {tag}
@@ -49,18 +64,7 @@ const toc = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 
         </a>
       </footer>
     </article>
-    {toc.length > 0 && (
-      <aside class="toc" aria-label="文章目录" data-pagefind-ignore>
-        <p class="eyebrow">ON THIS PAGE / 目录</p>
-        <nav>
-          {toc.map((heading) => (
-            <a href={`#${heading.slug}`} class:list={{ subheading: heading.depth === 3 }}>
-              {heading.text}
-            </a>
-          ))}
-        </nav>
-      </aside>
-    )}
+    <ArticleToc headings={toc} />
   </div>
 </SiteLayout>
 <style>
@@ -119,7 +123,7 @@ const toc = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 
     font: 10px/1.7 var(--mono);
     color: var(--muted);
   }
-  .post-meta time {
+  .post-meta > time {
     padding-left: 24px;
     border-left: 1px solid var(--border);
   }
@@ -231,38 +235,6 @@ const toc = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 
   .post-footer a {
     font-size: 13px;
   }
-  .toc {
-    position: sticky;
-    top: 36px;
-    align-self: start;
-    border-top: 1px solid var(--strong-border);
-    padding-top: 18px;
-  }
-  .toc > p {
-    color: var(--muted);
-    font-size: 9px;
-    margin-bottom: 16px;
-  }
-  .toc nav {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  .toc a {
-    min-height: 44px;
-    display: flex;
-    align-items: center;
-    font-size: 12px;
-    line-height: 1.7;
-    padding-block: 8px;
-  }
-  .toc a:hover {
-    color: var(--accent);
-  }
-  .toc .subheading {
-    padding-left: 12px;
-    color: var(--muted);
-  }
   @media (max-width: 1000px) {
     .with-toc {
       grid-template-columns: minmax(0, 1fr) 160px;
@@ -274,16 +246,6 @@ const toc = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 
       display: flex;
       flex-direction: column;
       gap: 32px;
-    }
-    .toc {
-      position: static;
-      order: -1;
-      width: 100%;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 14px;
-    }
-    .toc > p {
-      margin-bottom: 6px;
     }
   }
   @media (max-width: 700px) {
@@ -306,7 +268,7 @@ const toc = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 
       gap: 12px 18px;
       font-size: 9px;
     }
-    .post-meta time {
+    .post-meta > time {
       padding-left: 18px;
     }
     .prose {

@@ -13,7 +13,11 @@ export const GET: APIRoute = async ({ site }) => {
   const articles = (await getCollection('blog')).sort(
     (a, b) => b.data.date.getTime() - a.data.date.getTime(),
   );
-  const updated = articles[0]?.data.date.toISOString() ?? '2024-11-02T00:00:00.000Z';
+  const latestUpdate = articles.reduce(
+    (latest, article) => Math.max(latest, (article.data.updated ?? article.data.date).getTime()),
+    articles[0]?.data.date.getTime() ?? Date.UTC(2024, 10, 2),
+  );
+  const updated = new Date(latestUpdate).toISOString();
   const feed = `<?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="zh-CN">
   <title>Charming · 个人博客</title>
@@ -27,12 +31,13 @@ export const GET: APIRoute = async ({ site }) => {
     .map((article) => {
       const url = new URL(`/post/${article.id}/`, base).href;
       const date = article.data.date.toISOString();
+      const modified = (article.data.updated ?? article.data.date).toISOString();
       return `<entry>
     <title>${escapeXml(article.data.title)}</title>
     <id>${escapeXml(url)}</id>
     <link href="${escapeXml(url)}" rel="alternate" />
     <published>${date}</published>
-    <updated>${date}</updated>
+    <updated>${modified}</updated>
     <summary>${escapeXml(article.data.description)}</summary>
     <content type="text">${escapeXml(article.body ?? article.data.description)}</content>
     ${article.data.tags.map((tag) => `<category term="${escapeXml(tag)}" />`).join('\n    ')}

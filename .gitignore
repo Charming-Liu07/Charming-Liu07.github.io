@@ -1,5 +1,6 @@
 node_modules/
 dist/
+.reading-dist/
 .astro/
 .superpowers/
 playwright-report/

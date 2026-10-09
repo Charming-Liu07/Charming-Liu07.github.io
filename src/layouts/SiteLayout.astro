@@ -5,13 +5,38 @@ interface Props {
   title: string;
   description?: string;
   active?: 'home' | 'blog' | 'about';
+  article?: {
+    publishedTime: string;
+    modifiedTime?: string;
+  };
 }
 const {
   title,
   description = 'Charming 的个人博客。写下一些想法，留给以后，也留给偶然路过的你。',
   active = 'home',
+  article,
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
+const pageTitle = canonical.pathname === '/' ? 'Charming · 个人博客' : `${title} · Charming`;
+const socialImage = new URL('/images/social-card.png', Astro.site);
+const socialImageAlt = 'Charming 个人博客，粉色像素 C_ 终端标志';
+const structuredData = article
+  ? JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'BlogPosting',
+      headline: title,
+      description,
+      url: canonical.href,
+      image: socialImage.href,
+      author: {
+        '@type': 'Person',
+        name: 'Charming',
+        url: new URL('/about/', Astro.site).href,
+      },
+      datePublished: article.publishedTime,
+      ...(article.modifiedTime ? { dateModified: article.modifiedTime } : {}),
+    }).replaceAll('<', '\\u003c')
+  : undefined;
 const navigation = [
   { label: '首页', href: '/', id: 'home' },
   { label: '文章', href: '/blog/', id: 'blog' },
@@ -26,14 +51,31 @@ const navigation = [
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <meta name="color-scheme" content="light dark" />
-    <title>{title === '首页' ? 'Charming · 个人博客' : `${title} · Charming`}</title>
+    <title>{pageTitle}</title>
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.ico" />
     <link rel="alternate" type="application/atom+xml" title="Charming 的文章" href="/atom.xml" />
-    <meta property="og:title" content={`${title} · Charming`} />
+    <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={article ? 'article' : 'website'} />
     <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content="Charming" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:image" content={socialImage} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={socialImageAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={socialImage} />
+    <meta name="twitter:image:alt" content={socialImageAlt} />
+    {article && <meta property="article:published_time" content={article.publishedTime} />}
+    {article?.modifiedTime && (
+      <meta property="article:modified_time" content={article.modifiedTime} />
+    )}
+    {structuredData && <script type="application/ld+json" set:html={structuredData} />}
     <script is:inline>
       try {
         const saved = localStorage.getItem('charming-theme');
