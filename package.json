@@ -10,7 +10,8 @@
     "test:site": "node --test tests/blog.test.mjs",
     "build": "astro build && pagefind --site dist",
     "preview": "astro preview --host 127.0.0.1",
-    "test:browser": "playwright test"
+    "test:browser": "playwright test",
+    "test:reading": "node tests/reading/run.mjs"
   },
   "engines": {
     "node": ">=22.12.0"

@@ -1,0 +1,189 @@
+---
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+  headings: MarkdownHeading[];
+}
+const { headings } = Astro.props;
+---
+
+{headings.length > 0 && (
+  <aside class="toc" aria-label="文章目录" data-article-toc data-pagefind-ignore>
+    <p class="toc-label eyebrow" aria-hidden="true">
+      ON THIS PAGE / 目录
+    </p>
+    <details open>
+      <summary>ON THIS PAGE / 目录</summary>
+      <nav aria-label="本页章节">
+        {headings.map((heading) => (
+          <a
+            href={`#${heading.slug}`}
+            data-section={heading.slug}
+            class:list={{ subheading: heading.depth === 3 }}
+          >
+            {heading.text}
+          </a>
+        ))}
+      </nav>
+    </details>
+  </aside>
+)}
+
+<script>
+  const toc = document.querySelector<HTMLElement>('[data-article-toc]');
+  if (toc) {
+    const details = toc.querySelector('details')!;
+    const mobile = window.matchMedia('(max-width: 800px)');
+    const sections = [...toc.querySelectorAll<HTMLAnchorElement>('a[data-section]')]
+      .map((link) => ({ link, heading: document.getElementById(link.dataset.section!) }))
+      .filter((section): section is { link: HTMLAnchorElement; heading: HTMLElement } =>
+        Boolean(section.heading),
+      );
+    let frame = 0;
+
+    function updateCurrentSection() {
+      frame = 0;
+      let current = sections.at(0);
+      for (const section of sections) {
+        if (section.heading.getBoundingClientRect().top > 96) break;
+        current = section;
+      }
+      if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2) {
+        current = sections.at(-1);
+      }
+      for (const section of sections) {
+        if (section === current) section.link.setAttribute('aria-current', 'location');
+        else section.link.removeAttribute('aria-current');
+      }
+    }
+
+    function scheduleUpdate() {
+      if (!frame) frame = window.requestAnimationFrame(updateCurrentSection);
+    }
+
+    function applyBreakpoint() {
+      details.open = !mobile.matches;
+      scheduleUpdate();
+    }
+
+    toc.addEventListener('click', (event) => {
+      if (
+        mobile.matches &&
+        event.button === 0 &&
+        !event.ctrlKey &&
+        !event.metaKey &&
+        !event.shiftKey &&
+        !event.altKey &&
+        event.target instanceof Element &&
+        event.target.closest('a[data-section]')
+      ) {
+        // Close before the browser follows the native link, so its target uses the final layout.
+        details.open = false;
+      }
+    });
+    details.addEventListener('toggle', scheduleUpdate);
+    mobile.addEventListener('change', applyBreakpoint);
+    window.addEventListener('scroll', scheduleUpdate, { passive: true });
+    window.addEventListener('resize', scheduleUpdate);
+    window.addEventListener('hashchange', scheduleUpdate);
+    window.addEventListener('load', scheduleUpdate, { once: true });
+    const content = document.querySelector('.post-content');
+    if (content) new ResizeObserver(scheduleUpdate).observe(content);
+    applyBreakpoint();
+  }
+</script>
+
+<style>
+  .toc {
+    position: sticky;
+    top: 36px;
+    align-self: start;
+    max-height: calc(100vh - 72px);
+    overflow-y: auto;
+    border-top: 1px solid var(--strong-border);
+    padding-top: 18px;
+  }
+  .toc-label {
+    color: var(--muted);
+    font-size: 9px;
+    margin-bottom: 16px;
+  }
+  summary {
+    display: none;
+  }
+  nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  a {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+    border-left: 2px solid transparent;
+    padding: 8px 10px;
+  }
+  a:hover {
+    color: var(--accent);
+  }
+  a:focus-visible {
+    outline-offset: -3px;
+  }
+  .subheading {
+    padding-left: 22px;
+    color: var(--muted);
+  }
+  a[aria-current='location'] {
+    border-left-color: var(--accent);
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-weight: 600;
+  }
+  @media (max-width: 800px) {
+    .toc {
+      position: static;
+      order: -1;
+      width: 100%;
+      max-height: none;
+      overflow: visible;
+      border-bottom: 1px solid var(--border);
+      padding: 0;
+    }
+    .toc-label {
+      display: none;
+    }
+    summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 48px;
+      color: var(--muted);
+      font: 12px/1.6 var(--mono);
+      letter-spacing: 0.075em;
+      cursor: pointer;
+      list-style: none;
+    }
+    summary::-webkit-details-marker {
+      display: none;
+    }
+    summary::after {
+      content: '+';
+      color: var(--text);
+      font-size: 18px;
+    }
+    details[open] summary::after {
+      content: '−';
+    }
+    summary:focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 5px;
+    }
+    nav {
+      padding-bottom: 14px;
+    }
+  }
+</style>
