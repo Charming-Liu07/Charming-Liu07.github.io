@@ -12,8 +12,13 @@ const tags = [...new Set(articles.flatMap((article) => article.data.tags))].sort
 
 <SiteLayout title="标签" description="按标签浏览 Charming 的公开文章。" active="blog">
   <header class="page-header">
+    <span class="page-number">INDEX / TOPICS</span>
     <p class="eyebrow">FOLLOW A THREAD</p>
-    <h1 class="page-title">沿着一个主题，继续读。</h1>
+    <h1 class="page-title">
+      从一个主题，
+      <br />
+      读起。
+    </h1>
     <p>标签把有关联的文字放在一起。</p>
   </header>
   {tags.length > 0 ? (
@@ -30,8 +35,7 @@ const tags = [...new Set(articles.flatMap((article) => article.data.tags))].sort
         {tags.map((tag) => (
           <section id={tag} class="tag-group">
             <h2>
-              <Icon name="tag" size={18} />
-              {tag}
+              <span>#</span> {tag}
             </h2>
             <ul>
               {articles
@@ -39,10 +43,11 @@ const tags = [...new Set(articles.flatMap((article) => article.data.tags))].sort
                 .map((article) => (
                   <li>
                     <a href={`/post/${article.id}/`}>
-                      {article.data.title}
+                      <span>{article.data.title}</span>
                       <time datetime={article.data.date.toISOString().slice(0, 10)}>
                         {article.data.date.toISOString().slice(0, 10)}
                       </time>
+                      <Icon name="arrowUp" size={18} />
                     </a>
                   </li>
                 ))}
@@ -52,14 +57,13 @@ const tags = [...new Set(articles.flatMap((article) => article.data.tags))].sort
       </div>
     </>
   ) : (
-    <div class="empty-state card">
-      <span class="empty-icon">
-        <Icon name="tag" size={29} />
-      </span>
+    <div class="empty-state">
+      <p class="eyebrow">[ NO TAGS YET ]</p>
       <h2>还没有文章标签。</h2>
       <p>现有文章未设置标签，你可以先按时间浏览。</p>
       <a href="/archives/" class="button button-secondary">
-        前往文章归档 <Icon name="arrow" size={15} />
+        前往文章归档
+        <Icon name="arrow" size={17} />
       </a>
     </div>
   )}
@@ -69,72 +73,76 @@ const tags = [...new Set(articles.flatMap((article) => article.data.tags))].sort
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    margin-bottom: 39px;
+    margin-bottom: 54px;
   }
-  .tag-cloud a {
-    font-size: 14px;
-    padding: 7px 12px;
-  }
-  .tag-cloud a:hover {
-    color: var(--accent);
-    border-color: var(--accent);
+  .tag-cloud .pill {
+    padding-inline: 16px;
   }
   .tag-cloud span {
-    margin-left: 9px;
-    font-size: 14px;
-  }
-  .tag-groups {
-    max-width: 760px;
+    font-size: 10px;
   }
   .tag-group {
-    margin-bottom: 36px;
-    scroll-margin-top: 25px;
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 60px;
+    margin-bottom: 40px;
+    scroll-margin-top: 32px;
   }
   .tag-group h2 {
-    display: flex;
-    gap: 9px;
-    align-items: center;
-    font-size: 19px;
+    font-size: 28px;
+    overflow-wrap: anywhere;
   }
-  .tag-group h2 svg {
-    color: var(--accent);
+  .tag-group h2 > span {
+    color: var(--muted);
+    font-family: var(--mono);
   }
   .tag-group ul {
     list-style: none;
     margin: 0;
     padding: 0;
-    border-top: 1px solid var(--border);
+    border-top: 1px solid var(--strong-border);
   }
   .tag-group li {
     border-bottom: 1px solid var(--border);
   }
   .tag-group a {
     display: flex;
-    justify-content: space-between;
-    gap: 15px;
-    padding: 18px 0;
+    align-items: center;
+    gap: 24px;
+    min-height: 64px;
+    padding: 16px 0;
+  }
+  .tag-group a > span {
+    flex: 1;
+    overflow-wrap: anywhere;
   }
   .tag-group a:hover {
     color: var(--accent);
   }
   .tag-group time {
-    font-size: 14px;
+    font: 10px var(--mono);
     color: var(--muted);
+    white-space: nowrap;
   }
-  .empty-state {
-    max-width: 700px;
-    padding: 49px 25px;
+  @media (max-width: 900px) {
+    .tag-group {
+      grid-template-columns: 150px minmax(0, 1fr);
+      gap: 36px;
+    }
   }
-  .empty-icon {
-    display: block;
-    color: var(--accent);
-    margin-bottom: 17px;
-  }
-  .empty-state h2 {
-    font-size: 19px;
-  }
-  .empty-state p {
-    font-size: 14px;
-    margin-bottom: 22px;
+  @media (max-width: 700px) {
+    .tag-group {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 10px;
+    }
+    .tag-group h2 {
+      font-size: 25px;
+    }
+    .tag-group a {
+      gap: 12px;
+    }
+    .tag-group time {
+      font-size: 9px;
+    }
   }
 </style>

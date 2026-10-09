@@ -16,7 +16,7 @@ export const GET: APIRoute = async ({ site }) => {
   const updated = articles[0]?.data.date.toISOString() ?? '2024-11-02T00:00:00.000Z';
   const feed = `<?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="zh-CN">
-  <title>Charming · 文字与记忆</title>
+  <title>Charming · 个人博客</title>
   <subtitle>Charming 的公开文章</subtitle>
   <id>${escapeXml(base.href)}</id>
   <link href="${escapeXml(new URL('/atom.xml', base).href)}" rel="self" type="application/atom+xml" />

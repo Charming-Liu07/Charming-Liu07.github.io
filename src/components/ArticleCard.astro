@@ -7,197 +7,147 @@ interface Props {
 }
 const { article, featured = false } = Astro.props;
 const date = article.data.date.toISOString().slice(0, 10);
+const Heading = featured ? 'h3' : 'h2';
 ---
 
-<article class:list={{ card: true, 'article-card': true, featured }}>
+<article class:list={{ 'article-card': true, featured }}>
   <div class="article-meta">
-    <span class="article-type">
-      <Icon name="book" size={17} />
-      随笔
-    </span>
+    <span class="article-label">CHARMING / WRITING</span>
     <time datetime={date}>{date}</time>
   </div>
-  <h3>
-    <a class="article-title" href={`/post/${article.id}/`}>
-      {article.data.title}
-      <span class="article-arrow">
-        <Icon name="arrow" size={23} />
-      </span>
-    </a>
-  </h3>
-  <p>{article.data.description}</p>
-  <div class="article-bottom">
-    {article.data.tags.length > 0 ? (
+  <div class="article-copy">
+    <Heading>
+      <a class="article-title" href={`/post/${article.id}/`}>
+        {article.data.title}
+      </a>
+    </Heading>
+    <p>{article.data.description}</p>
+    {article.data.tags.length > 0 && (
       <div class="article-tags">
         {article.data.tags.map((tag) => (
           <a class="pill" href={`/tags/#${encodeURIComponent(tag)}`}>
-            {tag}
+            # {tag}
           </a>
         ))}
       </div>
-    ) : (
-      <span class="article-author">Charming</span>
     )}
-    <a class="read-link" href={`/post/${article.id}/`}>
-      阅读文章 <Icon name="arrow" size={18} />
-    </a>
   </div>
+  <a class="read-link" href={`/post/${article.id}/`} aria-label={`阅读《${article.data.title}》`}>
+    <span>阅读文章</span>
+    <Icon name="arrowUp" size={26} />
+  </a>
 </article>
 <style>
   .article-card {
-    position: relative;
-    min-width: 0;
-    padding: clamp(24px, 2.5vw, 34px);
-    display: flex;
-    flex-direction: column;
-    transition:
-      border-color 0.3s,
-      transform 0.3s var(--ease-out),
-      box-shadow 0.3s;
-  }
-  .article-card:focus-within {
-    border-color: var(--accent);
+    display: grid;
+    grid-template-columns: 185px minmax(0, 1fr) 130px;
+    gap: 42px;
+    align-items: start;
+    border-bottom: 1px solid var(--border);
+    padding: 38px 0 42px;
   }
   .article-meta {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 8px 16px;
-    font-size: 14px;
+    flex-direction: column;
+    gap: 14px;
+    padding-top: 7px;
+    font: 11px/1.5 var(--mono);
     color: var(--muted);
-    margin-bottom: 29px;
   }
-  .article-meta time {
-    font-variant-numeric: tabular-nums;
+  .article-label {
+    font-size: 9px;
+    letter-spacing: 0.04em;
   }
-  .article-type {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  .article-copy {
+    min-width: 0;
   }
-  .article-card h3 {
-    font-family: 'Songti SC', STSong, SimSun, serif;
-    font-size: clamp(27px, 2.5vw, 34px);
-    font-weight: 600;
-    line-height: 1.4;
+  h2,
+  h3 {
     margin: 0 0 16px;
-    letter-spacing: -0.04em;
+    font-size: clamp(30px, 3vw, 42px);
+    line-height: 1.3;
     overflow-wrap: anywhere;
   }
   .article-title {
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 7px;
+    text-decoration-thickness: 1px;
+  }
+  .article-title:hover {
+    text-decoration-color: currentColor;
+  }
+  .article-copy p {
+    max-width: 44em;
+    color: var(--muted);
+    font-size: 16px;
+    margin-bottom: 0;
+    overflow-wrap: anywhere;
+  }
+  .article-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 22px;
+  }
+  .read-link {
+    min-height: 48px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 20px;
+    margin-top: 5px;
+    font-size: 12px;
   }
-  .article-title::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    border-radius: var(--radius);
+  .read-link svg {
+    transition: transform 0.2s var(--ease-out);
   }
-  .article-title:focus-visible {
-    outline: none;
-  }
-  .article-title:focus-visible::after {
-    outline: 3px solid var(--accent);
-    outline-offset: 5px;
-  }
-  .article-arrow {
+  .read-link:hover {
     color: var(--accent);
-    display: grid;
-    place-items: center;
-    width: 42px;
-    height: 42px;
-    border: 1px solid var(--border);
-    border-radius: 50%;
-    flex-shrink: 0;
-    transition:
-      background 0.3s,
-      transform 0.3s var(--ease-out);
   }
-  .article-card p {
-    font-size: 16px;
-    color: var(--muted);
-    margin: 0 0 26px;
-    flex: 1;
-    overflow-wrap: anywhere;
-    text-wrap: pretty;
-  }
-  .article-bottom {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 12px;
-    border-top: 1px solid var(--border);
-    padding-top: 14px;
-  }
-  .article-tags {
-    position: relative;
-    z-index: 2;
-    pointer-events: none;
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-    min-width: 0;
-  }
-  .article-tags a {
-    pointer-events: auto;
-    min-height: 44px;
-    font-size: 14px;
-    overflow-wrap: anywhere;
-    max-width: 100%;
-  }
-  .article-author {
-    color: var(--muted);
-    font-size: 14px;
-  }
-  .read-link {
-    position: relative;
-    z-index: 2;
-    min-height: 44px;
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    font-size: 14px;
-    color: var(--accent);
-    white-space: nowrap;
+  .read-link:hover svg {
+    transform: translate(3px, -3px);
   }
   .featured {
-    min-height: 314px;
+    padding-block: 42px 48px;
   }
-  @media (hover: hover) and (pointer: fine) {
-    .article-card:hover {
-      border-color: var(--accent);
-      transform: translateY(-4px);
-      box-shadow: 0 22px 40px -30px color-mix(in srgb, var(--accent) 45%, transparent);
-    }
-    .article-card:hover .article-arrow {
-      background: var(--accent-soft);
-      transform: rotate(-8deg);
-    }
-    .article-tags a:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-  }
-  .article-card:has(.article-title:active),
-  .article-card:has(.read-link:active) {
-    transform: translateY(0);
-    background: var(--surface-soft);
-  }
-  @media (max-width: 760px) {
+  @media (max-width: 1000px) {
     .article-card {
-      padding: 24px;
+      grid-template-columns: 140px minmax(0, 1fr) 110px;
+      gap: 24px;
+    }
+  }
+  @media (max-width: 700px) {
+    .article-card {
+      grid-template-columns: minmax(0, 1fr) 44px;
+      gap: 20px 16px;
+      padding-block: 28px 32px;
     }
     .article-meta {
-      margin-bottom: 25px;
+      grid-column: 1 / -1;
+      flex-direction: row;
+      justify-content: space-between;
+      gap: 16px;
+      padding-top: 0;
     }
-    .featured {
-      min-height: 290px;
+    h2,
+    h3 {
+      font-size: 30px;
+      margin-bottom: 13px;
+    }
+    .read-link {
+      justify-content: center;
+      margin-top: 0;
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--border);
+    }
+    .read-link span {
+      display: none;
+    }
+    .read-link svg {
+      width: 22px;
+      height: 22px;
     }
   }
 </style>

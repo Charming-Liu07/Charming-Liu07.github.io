@@ -10,17 +10,26 @@ const years = [...new Set(articles.map((article) => article.data.date.getUTCFull
 
 <SiteLayout title="归档" active="blog" description="按时间浏览 Charming 的所有公开文章。">
   <header class="page-header">
+    <span class="page-number">INDEX / TIME</span>
     <p class="eyebrow">THROUGH THE YEARS</p>
-    <h1 class="page-title">时间里的文字。</h1>
+    <h1 class="page-title">
+      沿着时间，
+      <br />
+      翻一翻。
+    </h1>
     <p>共 {articles.length} 篇文章。每次落笔，都留下了一点痕迹。</p>
   </header>
   <div class="archive-list">
     {years.map((year) => (
-      <section class="archive-year">
+      <section class="archive-year" aria-labelledby={`year-${year}`}>
         <div class="year-heading">
-          <h2>{year}</h2>
+          <h2 id={`year-${year}`}>
+            {year}
+            <span>_</span>
+          </h2>
           <span>
-            {articles.filter((article) => article.data.date.getUTCFullYear() === year).length} 篇
+            {articles.filter((article) => article.data.date.getUTCFullYear() === year).length}{' '}
+            篇文章
           </span>
         </div>
         <ul>
@@ -33,7 +42,7 @@ const years = [...new Set(articles.map((article) => article.data.date.getUTCFull
                 </time>
                 <a href={`/post/${article.id}/`}>
                   {article.data.title}
-                  <Icon name="arrowUp" size={16} />
+                  <Icon name="arrowUp" size={22} />
                 </a>
               </li>
             ))}
@@ -41,64 +50,95 @@ const years = [...new Set(articles.map((article) => article.data.date.getUTCFull
       </section>
     ))}
   </div>
-  <a class="button button-secondary archive-back" href="/blog/">
-    浏览全部文章 <Icon name="arrow" size={15} />
+  {articles.length === 0 && (
+    <div class="empty-state">
+      <h2>还没有文章。</h2>
+      <p>新的文字会在这里留下日期。</p>
+    </div>
+  )}
+  <a class="text-link archive-back" href="/blog/">
+    浏览全部文章
+    <Icon name="arrow" size={17} />
   </a>
 </SiteLayout>
 <style>
-  .archive-list {
-    max-width: 760px;
-  }
   .archive-year {
-    margin-bottom: 36px;
-  }
-  .year-heading {
-    display: flex;
-    align-items: baseline;
-    gap: 13px;
-    margin-bottom: 15px;
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 60px;
+    margin-bottom: 52px;
   }
   .year-heading h2 {
-    font-size: 25px;
-    margin: 0;
+    margin: 0 0 8px;
+    font: 50px/1.2 var(--mono);
+    letter-spacing: -0.08em;
   }
-  .year-heading span {
-    font-size: 14px;
+  .year-heading h2 span {
+    color: var(--pink);
+  }
+  .year-heading > span {
     color: var(--muted);
+    font-size: 11px;
   }
   .archive-year ul {
     list-style: none;
-    padding: 0;
     margin: 0;
-    border-top: 1px solid var(--border);
+    padding: 0;
+    border-top: 1px solid var(--strong-border);
   }
   .archive-year li {
     display: flex;
     align-items: center;
-    gap: 30px;
+    gap: 32px;
     border-bottom: 1px solid var(--border);
-    padding: 21px 0;
+    padding: 20px 0;
   }
   .archive-year time {
-    font-size: 14px;
     color: var(--muted);
-    font-variant-numeric: tabular-nums;
+    font: 11px var(--mono);
   }
   .archive-year a {
-    flex: 1;
+    min-height: 44px;
     display: flex;
     align-items: center;
-    min-height: 44px;
     justify-content: space-between;
-    font-size: 15px;
+    gap: 20px;
+    flex: 1;
+    font-size: 23px;
+    overflow-wrap: anywhere;
   }
   .archive-year a:hover {
     color: var(--accent);
   }
-  .archive-year a svg {
-    color: var(--muted);
-  }
   .archive-back {
-    margin-top: 10px;
+    margin-top: 18px;
+  }
+  @media (max-width: 900px) {
+    .archive-year {
+      grid-template-columns: 150px minmax(0, 1fr);
+      gap: 36px;
+    }
+  }
+  @media (max-width: 700px) {
+    .archive-year {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 24px;
+      margin-bottom: 38px;
+    }
+    .year-heading {
+      display: flex;
+      align-items: baseline;
+      gap: 20px;
+    }
+    .year-heading h2 {
+      font-size: 39px;
+    }
+    .archive-year li {
+      gap: 24px;
+      padding-block: 14px;
+    }
+    .archive-year a {
+      font-size: 20px;
+    }
   }
 </style>

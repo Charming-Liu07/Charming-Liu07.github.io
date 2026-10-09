@@ -4,21 +4,18 @@ import Icon from '../components/Icon.astro';
 interface Props {
   title: string;
   description?: string;
-  active?: 'home' | 'blog' | 'memory' | 'about';
-  fullWidth?: boolean;
+  active?: 'home' | 'blog' | 'about';
 }
 const {
   title,
-  description = 'Charming 的个人博客与本机 AI 对话记忆库。记录文字，整理知识，延续思考。',
+  description = 'Charming 的个人博客。写下一些想法，留给以后，也留给偶然路过的你。',
   active = 'home',
-  fullWidth = false,
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const navigation = [
-  { label: '首页', href: '/', icon: 'home', id: 'home' },
-  { label: '文章', href: '/blog/', icon: 'book', id: 'blog' },
-  { label: '记忆库', href: '/memory/', icon: 'memory', id: 'memory' },
-  { label: '关于', href: '/about/', icon: 'user', id: 'about' },
+  { label: '首页', href: '/', id: 'home' },
+  { label: '文章', href: '/blog/', id: 'blog' },
+  { label: '关于', href: '/about/', id: 'about' },
 ];
 ---
 
@@ -29,7 +26,7 @@ const navigation = [
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <meta name="color-scheme" content="light dark" />
-    <title>{title === '首页' ? 'Charming · 文字与记忆' : `${title} · Charming`}</title>
+    <title>{title === '首页' ? 'Charming · 个人博客' : `${title} · Charming`}</title>
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.ico" />
     <link rel="alternate" type="application/atom+xml" title="Charming 的文章" href="/atom.xml" />
@@ -41,11 +38,7 @@ const navigation = [
       try {
         const saved = localStorage.getItem('charming-theme');
         document.documentElement.dataset.theme =
-          saved === 'light' || saved === 'dark'
-            ? saved
-            : matchMedia('(prefers-color-scheme: dark)').matches
-              ? 'dark'
-              : 'light';
+          saved === 'dark' || saved === 'light' ? saved : 'light';
       } catch {
         document.documentElement.dataset.theme = 'light';
       }
@@ -55,125 +48,92 @@ const navigation = [
     <a class="skip-link" href="#main-content">
       跳到主要内容
     </a>
-    <aside class="sidebar" aria-label="主导航" data-pagefind-ignore>
-      <a class="brand" href="/" aria-label="Charming 首页">
-        <span class="brand-mark">
-          C<span>·</span>
-        </span>
-        <span>
-          Charming<span class="brand-caption">文字与记忆</span>
-        </span>
-      </a>
-      <p class="sidebar-label">我的空间</p>
-      <nav class="main-nav">
-        {navigation.map((item) => (
-          <a
-            href={item.href}
-            class:list={{ 'nav-item': true, active: active === item.id }}
-            aria-current={active === item.id ? 'page' : undefined}
-          >
-            <Icon name={item.icon} />
-            <span>{item.label}</span>
-            {item.id === 'memory' && <span class="local-tag">本机</span>}
-          </a>
-        ))}
-      </nav>
-      <div class="sidebar-collections">
-        <p class="sidebar-label">浏览文章</p>
-        <a href="/archives/">
-          <Icon name="archive" size={17} />
-          归档
-        </a>
-        <a href="/tags/">
-          <Icon name="tag" size={17} />
-          标签
-        </a>
-        <a href="/atom.xml">
-          <span class="rss-glyph">◔</span>订阅 RSS
-        </a>
-      </div>
-      <div class="sidebar-bottom">
-        <div class="owner">
-          <img src="/images/avatar.png" alt="Charming 的头像" width="35" height="35" />
-          <span>
-            <strong>Charming</strong>
-            <small>记录，也记得。</small>
-          </span>
-          <a
-            href="https://github.com/Charming-Liu07"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Charming 的 GitHub"
-          >
-            <Icon name="arrowUp" size={16} />
-          </a>
-        </div>
-      </div>
-    </aside>
     <div class="site-shell">
-      <header class="topbar" data-pagefind-ignore>
-        <a class="mobile-brand" href="/">
-          <span class="brand-mark">
-            C<span>·</span>
-          </span>
-          Charming
-        </a>
-        <div class="breadcrumbs">
-          <span>个人空间</span>
-          <span class="breadcrumb-slash">/</span>
-          <strong>{title}</strong>
-        </div>
-        <div class="topbar-actions">
-          <a class="search-shortcut" href="/search/" aria-label="搜索公开文章">
-            <Icon name="search" size={17} />
-            <span>搜索文章</span>
-            <kbd>Ctrl K</kbd>
+      <header class="site-header" data-pagefind-ignore>
+        <div class="header-inner">
+          <a class="brand" href="/" aria-label="Charming 首页">
+            <span class="brand-mark" aria-hidden="true">
+              C<span>_</span>
+            </span>
+            <span>
+              Charming<span class="brand-caption">PERSONAL BLOG</span>
+            </span>
           </a>
-          <button
-            id="theme-toggle"
-            class="icon-button"
-            aria-label="切换深浅主题"
-            aria-pressed="false"
-            title="切换深浅主题"
-          >
-            <span class="theme-sun">
-              <Icon name="sun" size={19} />
-            </span>
-            <span class="theme-moon">
-              <Icon name="moon" size={19} />
-            </span>
-          </button>
+          <nav class="main-nav" aria-label="主导航">
+            {navigation.map((item) => (
+              <a
+                href={item.href}
+                class:list={{ 'nav-item': true, active: active === item.id }}
+                aria-current={active === item.id ? 'page' : undefined}
+              >
+                {item.label}
+                <span class="nav-dot" aria-hidden="true"></span>
+              </a>
+            ))}
+          </nav>
+          <div class="header-actions">
+            <a class="search-shortcut" href="/search/" aria-label="搜索公开文章">
+              <Icon name="search" size={18} />
+              <span>搜索</span>
+              <kbd>Ctrl K</kbd>
+            </a>
+            <button
+              id="theme-toggle"
+              class="icon-button"
+              aria-label="切换深浅主题"
+              aria-pressed="false"
+              title="切换深浅主题"
+            >
+              <span class="theme-sun">
+                <Icon name="sun" size={18} />
+              </span>
+              <span class="theme-moon">
+                <Icon name="moon" size={18} />
+              </span>
+            </button>
+          </div>
         </div>
       </header>
-      <nav class="mobile-nav" aria-label="移动导航" data-pagefind-ignore>
-        {navigation.map((item) => (
-          <a
-            href={item.href}
-            class:list={{ active: active === item.id }}
-            aria-current={active === item.id ? 'page' : undefined}
-          >
-            <Icon name={item.icon} size={18} />
-            {item.label}
-          </a>
-        ))}
-      </nav>
-      <main
-        id="main-content"
-        class:list={{ 'main-content': true, 'full-width': fullWidth }}
-        tabindex="-1"
-      >
+      <main id="main-content" class="main-content" tabindex="-1">
         <slot />
       </main>
       <footer class="site-footer" data-pagefind-ignore>
-        <span>© {new Date().getFullYear()} Charming</span>
-        <span>文字公开 · 记忆留在本机</span>
-        <a
-          href="https://github.com/Charming-Liu07/Charming-Liu07.github.io"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          GitHub <Icon name="arrowUp" size={12} />
-        </a>
+        <div class="footer-inner">
+          <div class="footer-top">
+            <div>
+              <p class="eyebrow">THERE'S ALWAYS ANOTHER PAGE.</p>
+              <a class="footer-statement" href="/blog/">
+                Keep reading.
+                <Icon name="arrowUp" size={56} />
+              </a>
+            </div>
+            <nav class="footer-nav" aria-label="页脚导航">
+              <a href="/archives/">
+                文章归档
+                <Icon name="arrowUp" size={14} />
+              </a>
+              <a href="/tags/">
+                标签索引
+                <Icon name="arrowUp" size={14} />
+              </a>
+              <a href="/atom.xml">
+                订阅 RSS
+                <Icon name="arrowUp" size={14} />
+              </a>
+              <a href="https://github.com/Charming-Liu07" target="_blank" rel="noopener noreferrer">
+                GitHub
+                <Icon name="arrowUp" size={14} />
+              </a>
+            </nav>
+          </div>
+          <div class="footer-bottom">
+            <a href="/" class="footer-wordmark">
+              Charming<span>_</span>
+            </a>
+            <span>写下来，留给以后。</span>
+            <span>© {new Date().getFullYear()} Charming</span>
+          </div>
+        </div>
       </footer>
     </div>
     <script>
@@ -190,7 +150,7 @@ const navigation = [
         try {
           localStorage.setItem('charming-theme', theme);
         } catch {
-          /* Theme still works if storage is unavailable. */
+          /* Theme switching also works when storage is unavailable. */
         }
       });
       document.addEventListener('keydown', (event) => {
