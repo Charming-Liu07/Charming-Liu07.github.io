@@ -25,9 +25,8 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - run: npm test
       - run: npm run check
-      - run: npm run build
+      - run: npm test
       - uses: actions/upload-pages-artifact@v4
         with:
           path: dist

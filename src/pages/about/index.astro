@@ -5,163 +5,153 @@ import Icon from '../../components/Icon.astro';
 
 <SiteLayout
   title="关于"
-  description="你好，我是 Charming。这里是我的个人博客，也是一个在本机整理对话与记忆的空间。"
+  description="你好，我是 Charming。欢迎来到我的小站呀，很高兴遇见你！🤝"
   active="about"
 >
   <header class="page-header">
+    <span class="page-number">HELLO / WORLD</span>
     <p class="eyebrow">A LITTLE ABOUT THIS SPACE</p>
-    <h1 class="page-title">你好，我是 Charming。</h1>
+    <h1 class="page-title">
+      你好，
+      <br />
+      我是 Charming<span class="about-period">。</span>
+    </h1>
     <p>欢迎来到我的小站呀，很高兴遇见你！🤝</p>
   </header>
-  <section class="about-intro card">
-    <img src="/images/avatar.png" alt="Charming 的头像" width="88" height="88" />
-    <div>
-      <h2>一个可以停下来，写一点东西的地方。</h2>
-      <p>
-        这里有公开的文字，也有整理对话和想法的本机记忆库。希望每一次记录，都能让下一次回望更清楚一些。
-      </p>
-      <a href="/post/about/">
-        阅读最初的「关于」 <Icon name="arrow" size={15} />
+  <section class="about-intro" aria-labelledby="about-heading" data-reveal>
+    <div class="portrait-panel">
+      <img src="/images/avatar.png" alt="Charming 的头像" width="320" height="320" />
+      <span>CHARMING / PERSONAL BLOG</span>
+    </div>
+    <div class="about-copy">
+      <p class="eyebrow">NICE TO MEET YOU.</p>
+      <h2 id="about-heading">
+        欢迎来到
+        <br />
+        我的小站。
+      </h2>
+      <p>这里是 Charming 的个人博客。已经写下的文章，可以按时间浏览，也可以通过搜索寻找。</p>
+      <a class="text-link" href="/post/about/">
+        阅读最初的「关于」
+        <Icon name="arrowUp" size={18} />
       </a>
+      <p class="original-date">
+        FIRST POST / <time datetime="2024-11-02">2024-11-02</time>
+      </p>
     </div>
   </section>
-  <div class="about-columns">
-    <section>
-      <span class="about-icon">
-        <Icon name="book" size={24} />
-      </span>
-      <h2>文字，留给阅读的人。</h2>
-      <p>博客文章公开可见。你可以按时间或标签浏览，也可以通过 RSS 订阅。</p>
-      <a href="/blog/">
-        去看看文章 <Icon name="arrow" size={14} />
-      </a>
-    </section>
-    <section>
-      <span class="about-icon">
-        <Icon name="memory" size={24} />
-      </span>
-      <h2>记忆，留给接下来的自己。</h2>
-      <p>
-        导入 AI
-        对话，整理有用的信息，再把选中的记忆带进下一次对话。数据保存在当前浏览器，请定期导出备份。
-      </p>
-      <a href="/memory/">
-        打开本机记忆库 <Icon name="arrow" size={14} />
-      </a>
-    </section>
-  </div>
   <div class="about-links">
-    <a href="https://github.com/Charming-Liu07" target="_blank" rel="noopener noreferrer">
-      <Icon name="github" size={17} />
-      GitHub <Icon name="arrowUp" size={13} />
+    <a class="text-link" href="/blog/">
+      去看看文章
+      <Icon name="arrow" size={17} />
     </a>
-    <a href="/atom.xml">
-      订阅 RSS <Icon name="arrowUp" size={13} />
+    <a
+      class="text-link"
+      href="https://github.com/Charming-Liu07"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      GitHub
+      <Icon name="arrowUp" size={15} />
+    </a>
+    <a class="text-link" href="/atom.xml">
+      订阅 RSS
+      <Icon name="arrowUp" size={15} />
     </a>
     <span>cjdl！啦啦啦</span>
   </div>
 </SiteLayout>
 <style>
+  .about-period {
+    color: var(--accent);
+  }
   .about-intro {
-    display: flex;
-    gap: 28px;
-    padding: 32px;
-    margin-bottom: 31px;
-    align-items: flex-start;
-  }
-  .about-intro img {
-    border-radius: 50%;
-    object-fit: cover;
-    flex-shrink: 0;
-    background: var(--surface-soft);
-  }
-  .about-intro h2 {
-    font-size: 21px;
-    margin-bottom: 13px;
-  }
-  .about-intro p {
-    font-size: 16px;
-    color: var(--muted);
-    line-height: 1.95;
-    max-width: 560px;
-    margin-bottom: 17px;
-  }
-  .about-intro a,
-  .about-columns a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    gap: 8px;
-    font-size: 14px;
-    color: var(--accent);
-  }
-  .about-columns {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 39px;
-    padding: 9px 4px 35px;
-    border-bottom: 1px solid var(--border);
+    grid-template-columns: minmax(0, 0.7fr) minmax(0, 1fr);
+    gap: clamp(40px, 7vw, 110px);
+    padding: 12px 0 58px;
+    align-items: center;
   }
-  .about-icon {
-    color: var(--accent);
+  .portrait-panel {
+    border: 1px solid var(--strong-border);
+    background: var(--pink);
+    padding: 36px 36px 18px;
+    color: var(--charcoal);
+  }
+  .portrait-panel img {
     display: block;
-    margin-bottom: 15px;
+    width: 100%;
+    max-width: 320px;
+    aspect-ratio: 1;
+    object-fit: cover;
+    margin: 0 auto 22px;
+    border: 1px solid var(--charcoal);
+    filter: saturate(0.8);
   }
-  .about-columns h2 {
-    font-size: 17px;
-    margin-bottom: 12px;
+  .portrait-panel > span {
+    display: block;
+    font: 9px/1.6 var(--mono);
+    letter-spacing: 0.04em;
   }
-  .about-columns p {
-    font-size: 16px;
+  .about-copy .eyebrow {
+    font-size: 10px;
     color: var(--muted);
-    line-height: 1.95;
-    margin-bottom: 16px;
+    margin-bottom: 22px;
+  }
+  .about-copy h2 {
+    font-size: clamp(32px, 4vw, 52px);
+    margin-bottom: 25px;
+  }
+  .about-copy > p:not(.eyebrow):not(.original-date) {
+    font-size: 16px;
+    max-width: 32em;
+    color: var(--muted);
+    margin-bottom: 22px;
+  }
+  .original-date {
+    margin: 30px 0 0;
+    color: var(--muted);
+    font: 9px/1.6 var(--mono);
   }
   .about-links {
     display: flex;
     align-items: center;
-    gap: 24px;
-    margin-top: 24px;
-    font-size: 14px;
-    color: var(--muted);
-  }
-  .about-links a {
-    display: flex;
-    align-items: center;
-    min-height: 44px;
-    gap: 7px;
-  }
-  .about-links a:hover {
-    color: var(--accent);
+    flex-wrap: wrap;
+    gap: 18px 32px;
+    border-top: 1px solid var(--strong-border);
+    padding-top: 24px;
   }
   .about-links > span {
     margin-left: auto;
-    font-size: 14px;
+    font-size: 12px;
+    color: var(--muted);
   }
-  @media (max-width: 760px) {
+  @media (max-width: 700px) {
     .about-intro {
-      padding: 24px;
-      gap: 19px;
-      flex-direction: column;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 32px;
+      padding-bottom: 38px;
     }
-    .about-intro img {
-      width: 67px;
-      height: 67px;
+    .portrait-panel {
+      max-width: 340px;
+      width: 100%;
+      padding: 26px 26px 16px;
     }
-    .about-intro h2 {
-      font-size: 20px;
+    .portrait-panel img {
+      max-height: 260px;
     }
-    .about-columns {
-      grid-template-columns: 1fr;
-      gap: 30px;
+    .about-copy h2 {
+      font-size: 36px;
     }
     .about-links {
-      gap: 20px;
-      flex-wrap: wrap;
+      gap: 8px 24px;
+    }
+    .about-links .text-link {
+      font-size: 12px;
     }
     .about-links > span {
-      margin-left: 0;
-      width: 100%;
+      flex-basis: 100%;
+      margin-top: 16px;
     }
   }
 </style>

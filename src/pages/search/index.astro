@@ -5,15 +5,20 @@ import Icon from '../../components/Icon.astro';
 
 <SiteLayout title="搜索" description="搜索 Charming 的公开博客文章。" active="blog">
   <header class="page-header">
+    <span class="page-number">INDEX / SEARCH</span>
     <p class="eyebrow">FIND THE WORDS</p>
-    <h1 class="page-title">找回一段文字。</h1>
-    <p>输入关键词，搜索公开文章。你的本机对话与记忆在记忆库里单独搜索。</p>
+    <h1 class="page-title">
+      找一找，
+      <br />
+      你想读的文字。
+    </h1>
+    <p>从一个关键词开始，搜索这个小站里的文章。</p>
   </header>
   <section class="search-panel" data-pagefind-ignore>
     <form id="article-search" role="search">
       <label for="search-query">文章关键词</label>
       <div class="search-field">
-        <Icon name="search" size={20} />
+        <Icon name="search" size={22} />
         <input
           id="search-query"
           type="search"
@@ -23,6 +28,7 @@ import Icon from '../../components/Icon.astro';
         />
         <button class="button" type="submit">
           搜索
+          <Icon name="arrow" size={18} />
         </button>
       </div>
     </form>
@@ -31,10 +37,21 @@ import Icon from '../../components/Icon.astro';
     </p>
     <ul id="search-results" class="search-results"></ul>
     <noscript>
-      <p class="card no-script">
+      <p class="no-script">
         搜索需要启用 JavaScript。你也可以<a href="/archives/">浏览全部文章</a>。
       </p>
     </noscript>
+    <div class="search-alternative">
+      <span>也可以换一种方式浏览</span>
+      <a class="text-link" href="/archives/">
+        文章归档
+        <Icon name="arrowUp" size={15} />
+      </a>
+      <a class="text-link" href="/tags/">
+        标签索引
+        <Icon name="arrowUp" size={15} />
+      </a>
+    </div>
   </section>
 </SiteLayout>
 <script is:inline type="module">
@@ -65,15 +82,12 @@ import Icon from '../../components/Icon.astro';
       const result = await pagefind.search(query);
       const matches = await Promise.all(result.results.map((match) => match.data()));
       if (current !== sequence) return;
-      const publicMatches = matches.filter(
-        (match) => !new URL(match.url, location.origin).pathname.startsWith('/memory/'),
-      );
-      status.textContent = publicMatches.length
-        ? `找到 ${publicMatches.length} 条结果。`
+      status.textContent = matches.length
+        ? `找到 ${matches.length} 条结果。`
         : '暂时没有找到相关文字，换个关键词试试。';
-      for (const match of publicMatches) {
+      for (const match of matches) {
         const item = document.createElement('li');
-        item.className = 'card search-result';
+        item.className = 'search-result';
         const link = document.createElement('a');
         link.href = match.url;
         const title = document.createElement('h2');
@@ -110,89 +124,119 @@ import Icon from '../../components/Icon.astro';
 </script>
 <style>
   .search-panel {
-    max-width: 760px;
+    max-width: 920px;
   }
   .search-panel label {
     display: block;
-    font-size: 14px;
-    color: var(--muted);
-    margin-bottom: 10px;
+    margin-bottom: 14px;
+    font-size: 12px;
   }
   .search-field {
     display: flex;
     align-items: center;
-    gap: 13px;
+    gap: 18px;
+    padding: 12px 12px 12px 22px;
+    border: 1px solid var(--strong-border);
     background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 9px 10px 9px 18px;
-  }
-  .search-field > svg {
-    color: var(--muted);
   }
   .search-field input {
     flex: 1;
     min-width: 0;
+    padding: 10px 0;
+    font-size: 16px;
     border: 0;
     background: transparent;
-    padding: 7px 0;
-    font-size: 16px;
-    border-radius: 3px;
   }
   .search-field .button {
-    padding: 9px 19px;
+    gap: 24px;
   }
   .search-status {
-    font-size: 14px;
     color: var(--muted);
-    margin: 18px 0 23px;
+    font-size: 14px;
+    margin: 22px 0 32px;
   }
   .search-results {
     list-style: none;
-    padding: 0;
     margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
+    padding: 0;
+  }
+  .search-results :global(.search-result) {
+    border-top: 1px solid var(--border);
+  }
+  .search-results :global(.search-result:last-child) {
+    border-bottom: 1px solid var(--border);
   }
   .search-results :global(.search-result a) {
     display: block;
-    padding: 22px 25px;
+    padding: 30px 0;
   }
-  .search-results :global(.search-result:hover) {
-    border-color: var(--accent);
+  .search-results :global(.search-result a:hover h2) {
+    color: var(--accent);
   }
   .search-results :global(h2) {
-    font-size: 19px;
-    margin-bottom: 9px;
+    font-size: 28px;
+    margin-bottom: 16px;
   }
   .search-results :global(p) {
-    font-size: 14px;
     color: var(--muted);
-    margin-bottom: 14px;
+    font-size: 16px;
+    margin-bottom: 18px;
   }
   .search-results :global(.result-path) {
-    font-size: 14px;
-    color: var(--accent);
+    color: var(--muted);
+    font: 10px/1.6 var(--mono);
   }
   .no-script {
-    padding: 22px;
-    font-size: 14px;
+    padding: 24px;
+    border: 1px solid var(--border);
+    font-size: 16px;
   }
   .no-script a {
-    color: var(--accent);
     text-decoration: underline;
+    text-underline-offset: 4px;
   }
-  @media (max-width: 760px) {
+  .search-alternative {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px 28px;
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+  .search-alternative > span {
+    color: var(--muted);
+    font-size: 12px;
+    margin-right: auto;
+  }
+  .search-alternative a {
+    font-size: 12px;
+  }
+  @media (max-width: 700px) {
     .search-field {
-      gap: 9px;
-      padding-left: 13px;
+      gap: 12px;
+      padding: 8px 8px 8px 14px;
     }
-    .search-field input {
-      font-size: 16px;
+    .search-field > svg {
+      width: 18px;
+      height: 18px;
     }
     .search-field .button {
-      padding: 9px 14px;
+      padding-inline: 16px;
+      min-height: 44px;
+      font-size: 13px;
+    }
+    .search-field .button svg {
+      display: none;
+    }
+    .search-status {
+      font-size: 13px;
+    }
+    .search-alternative {
+      gap: 6px 24px;
+    }
+    .search-alternative > span {
+      flex-basis: 100%;
     }
   }
 </style>
